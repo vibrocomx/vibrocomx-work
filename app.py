@@ -32,9 +32,6 @@ def inject_globals():
 
 @app.route('/')
 def index():
-    mnt_setting = SiteSetting.query.filter_by(setting_key='maintenance_mode').first()
-    if mnt_setting and mnt_setting.setting_value == 'true' and not current_user.is_authenticated:
-        return render_template('maintenance.html')
 
     posts = Post.query.order_by(Post.date_posted.desc()).limit(3).all()
     return render_template('index.html', posts=posts)

@@ -3,33 +3,68 @@
 {% block title %}Admin Login{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto mt-20 bg-[#0b0c10] p-8 rounded-lg border border-[#333] shadow-lg">
-    <h2 class="text-3xl font-bold text-center mb-6 text-white uppercase tracking-widest">Admin Access</h2>
+<div class="max-w-md mx-auto mt-20 relative group" data-aos="zoom-in">
+    <!-- Glowing background effect behind the card -->
+    <div
+        class="absolute -inset-1 bg-gradient-to-r from-[#ff003c] to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000">
+    </div>
 
-    <form method="POST" action="{{ url_for('admin.login') }}">
-        <div class="mb-4">
-            <label class="block text-gray-400 text-sm font-bold mb-2 uppercase" for="username">
-                Username
-            </label>
-            <input
-                class="shadow appearance-none border border-[#333] rounded w-full py-2 px-3 text-gray-300 bg-[#15161a] leading-tight focus:outline-none focus:border-[#ff003c]"
-                id="username" name="username" type="text" placeholder="Username">
+    <div
+        class="relative bg-[#0b0c10]/90 backdrop-blur-xl p-8 rounded-lg border border-[#333] shadow-[0_0_30px_rgba(255,0,60,0.15)] overflow-hidden">
+
+        <!-- CRT scanline overlay effect -->
+        <div
+            class="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] opacity-20">
         </div>
-        <div class="mb-6">
-            <label class="block text-gray-400 text-sm font-bold mb-2 uppercase" for="password">
-                Password
-            </label>
-            <input
-                class="shadow appearance-none border border-[#333] rounded w-full py-2 px-3 text-gray-300 bg-[#15161a] mb-3 leading-tight focus:outline-none focus:border-[#ff003c]"
-                id="password" name="password" type="password" placeholder="******************">
+
+        <div class="text-center mb-8 relative z-10">
+            <i class="fas fa-biohazard text-[#ff003c] text-4xl mb-3 animate-pulse"></i>
+            <h2 class="text-3xl font-black text-white uppercase tracking-widest glitch-text" data-text="System Login">
+                System Login
+            </h2>
+            <p class="text-[10px] text-[#ff003c] font-mono mt-2 tracking-widest uppercase opacity-80">
+                <i class="fas fa-lock text-[8px] mr-1"></i> Restricted Access Protocol
+            </p>
         </div>
-        <div class="flex items-center justify-between">
+
+        <form method="POST" action="{{ url_for('admin.login') }}" class="relative z-10">
+            <div class="mb-5">
+                <label class="block text-gray-500 text-xs font-mono font-bold mb-2 uppercase tracking-wider"
+                    for="username">
+                    > Enter Identity
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <i class="fas fa-user-secret"></i>
+                    </span>
+                    <input
+                        class="appearance-none border border-[#333] rounded w-full py-3 pl-10 pr-3 text-green-500 bg-[#050505] font-mono text-sm leading-tight focus:outline-none focus:border-[#ff003c] focus:shadow-[0_0_15px_rgba(255,0,60,0.3)] transition-all placeholder-gray-700"
+                        id="username" name="username" type="text" placeholder="admin_ID" autocomplete="off">
+                </div>
+            </div>
+            <div class="mb-8">
+                <label class="block text-gray-500 text-xs font-mono font-bold mb-2 uppercase tracking-wider"
+                    for="password">
+                    > Enter Passkey
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <i class="fas fa-key"></i>
+                    </span>
+                    <input
+                        class="appearance-none border border-[#333] rounded w-full py-3 pl-10 pr-3 text-[#ff003c] bg-[#050505] font-mono text-sm leading-tight focus:outline-none focus:border-[#ff003c] focus:shadow-[0_0_15px_rgba(255,0,60,0.3)] transition-all placeholder-gray-700"
+                        id="password" name="password" type="password" placeholder="••••••••••••" autocomplete="off">
+                </div>
+            </div>
+
             <button
-                class="bg-[#ff003c] hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline uppercase tracking-wider transition-colors"
+                class="relative w-full overflow-hidden bg-transparent border border-[#ff003c] text-[#ff003c] hover:text-white font-bold py-3 px-4 rounded focus:outline-none uppercase tracking-widest font-mono text-sm group/btn transition-all"
                 type="submit">
-                Sign In
+                <span
+                    class="absolute inset-0 bg-[#ff003c] translate-y-[100%] group-hover/btn:translate-y-[0%] transition-transform duration-300 ease-in-out z-0"></span>
+                <span class="relative z-10"><i class="fas fa-terminal mr-2"></i> Initialize Protocol</span>
             </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 {% endblock %}
