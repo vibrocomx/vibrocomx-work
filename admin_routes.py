@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
+import os
 from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder
 
 admin_bp = Blueprint('admin', __name__)
@@ -48,6 +50,24 @@ def toggle_setting(setting_key):
         setting.setting_value = new_value
         db.session.commit()
         flash(f'{setting_key} toggled to {new_value}', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/update-text-setting', methods=['POST'])
+@login_required
+def update_text_setting():
+    setting_key = request.form.get('setting_key')
+    setting_value = request.form.get('setting_value')
+    
+    if setting_key:
+        setting = SiteSetting.query.filter_by(setting_key=setting_key).first()
+        if not setting:
+            setting = SiteSetting(setting_key=setting_key)
+            db.session.add(setting)
+        
+        setting.setting_value = setting_value
+        db.session.commit()
+        flash(f'Setting "{setting_key}" updated successfully.', 'success')
+        
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/edit-page', methods=['POST'])
@@ -110,7 +130,16 @@ def manage_founder():
     name = request.form.get('name')
     role = request.form.get('role')
     bio = request.form.get('bio')
-    image_url = request.form.get('image_url')
+    
+    # Handle File Upload
+    image_url = ''
+    if 'image_file' in request.files:
+        file = request.files['image_file']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            image_url = f"/static/uploads/{filename}"
     
     # Simple add for now (could extend to edit if id passed)
     founder = Founder(name=name, role=role, bio=bio, image_url=image_url)
@@ -137,7 +166,16 @@ def manage_post():
     summary = request.form.get('summary')
     content = request.form.get('content')
     category = request.form.get('category')
-    image_url = request.form.get('image_url')
+    
+    # Handle File Upload
+    image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
+    if 'image_file' in request.files:
+        file = request.files['image_file']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            image_url = f"/static/uploads/{filename}"
     
     if not slug:
         slug = title.lower().replace(' ', '-')

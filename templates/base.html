@@ -12,20 +12,66 @@
         href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Smooth, continuous breaking news marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            display: flex;
+        }
+
+        .animate-marquee {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(-100%, 0);
+            }
+        }
+    </style>
 </head>
 
 <body
     class="bg-gray-50 text-gray-800 flex flex-col min-h-screen relative font-sans selection:bg-slate-200 selection:text-black">
-    <!-- God Mode: Breaking Banner -->
+    <!-- Breaking Banner -->
     {% if show_banner %}
-    <div class="bg-red-700 border-y border-red-800 py-2 overflow-hidden fixed top-0 w-full z-50">
-        <div class="whitespace-nowrap animate-marquee">
-            <span class="mx-4 text-white font-serif text-sm uppercase tracking-wider flex items-center">
-                <i class="fas fa-circle text-[8px] mr-4 text-red-300 animate-pulse"></i> {{ breaking_text }}
+    <div class="bg-red-700 border-y border-red-800 py-2 fixed top-0 w-full z-50 shadow-md marquee-container">
+        <!-- We duplicate the content to make the scrolling seamless -->
+        <div class="animate-marquee flex items-center pr-8">
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ breaking_text }}
+            </span>
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> Developing Stories
+            </span>
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center opacity-75">
+                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> Critical Updates
+            </span>
+        </div>
+        <div class="animate-marquee flex items-center pr-8" aria-hidden="true">
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ breaking_text }}
+            </span>
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> Developing Stories
+            </span>
+            <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center opacity-75">
+                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> Critical Updates
             </span>
         </div>
     </div>
-    <div class="h-10"></div>
+    <div class="h-[42px]"></div>
     {% endif %}
 
     <!-- Navbar -->
@@ -44,10 +90,25 @@
                     class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
                     <span class="z-10 relative">Home</span>
                 </a>
-                <a href="{{ url_for('analysis') }}"
-                    class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
-                    <span class="z-10 relative">Analysis</span>
-                </a>
+                <div class="relative group">
+                    <button
+                        class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2 flex items-center">
+                        <span class="z-10 relative">Analysis</span>
+                        <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+                    </button>
+                    <!-- Dropdown Content -->
+                    <div
+                        class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-sm shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <a href="{{ url_for('analysis', category='security') }}"
+                            class="block px-4 py-2 text-xs uppercase tracking-widest text-gray-700 hover:bg-gray-50 hover:text-slate-900 border-b border-gray-100">Security</a>
+                        <a href="{{ url_for('analysis', category='politics') }}"
+                            class="block px-4 py-2 text-xs uppercase tracking-widest text-gray-700 hover:bg-gray-50 hover:text-slate-900 border-b border-gray-100">Politics</a>
+                        <a href="{{ url_for('analysis', category='economy') }}"
+                            class="block px-4 py-2 text-xs uppercase tracking-widest text-gray-700 hover:bg-gray-50 hover:text-slate-900 border-b border-gray-100">Economy</a>
+                        <a href="{{ url_for('analysis', category='science') }}"
+                            class="block px-4 py-2 text-xs uppercase tracking-widest text-gray-700 hover:bg-gray-50 hover:text-slate-900">Science</a>
+                    </div>
+                </div>
                 <a href="{{ url_for('mission') }}"
                     class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
                     <span class="z-10 relative">Mission</span>
@@ -58,16 +119,42 @@
                     class="flex items-center bg-slate-100 border border-slate-300 text-slate-700 px-4 py-1.5 rounded-sm uppercase text-xs font-bold tracking-widest hover:bg-slate-800 hover:text-white transition-all">
                     <i class="fas fa-terminal mr-2"></i> Dashboard
                 </a>
-                {% else %}
-                <a href="{{ url_for('admin.login') }}"
-                    class="group flex items-center text-slate-500 border border-slate-300 hover:border-slate-800 px-4 py-1.5 rounded-sm uppercase text-xs font-bold tracking-widest transition-all hover:bg-slate-800 hover:text-white">
-                    <i class="fas fa-lock mr-2 text-[10px] group-hover:unlock"></i> Login
-                </a>
                 {% endif %}
             </div>
 
             <!-- Mobile Menu Button -->
-            <button class="md:hidden text-slate-800 text-xl"><i class="fas fa-bars"></i></button>
+            <button id="mobile-menu-button" class="md:hidden text-slate-800 text-xl"><i
+                    class="fas fa-bars"></i></button>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 border-t border-gray-200 pt-4 pb-2">
+            <a href="{{ url_for('index') }}"
+                class="block py-2 text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest">Home</a>
+
+            <div class="py-2">
+                <span class="block text-gray-400 uppercase text-xs font-bold tracking-widest mb-2 px-2">Analysis</span>
+                <div class="pl-6 space-y-2 border-l-2 border-gray-100 ml-2">
+                    <a href="{{ url_for('analysis', category='security') }}"
+                        class="block text-gray-600 hover:text-slate-900 uppercase text-xs tracking-widest py-1">Security</a>
+                    <a href="{{ url_for('analysis', category='politics') }}"
+                        class="block text-gray-600 hover:text-slate-900 uppercase text-xs tracking-widest py-1">Politics</a>
+                    <a href="{{ url_for('analysis', category='economy') }}"
+                        class="block text-gray-600 hover:text-slate-900 uppercase text-xs tracking-widest py-1">Economy</a>
+                    <a href="{{ url_for('analysis', category='science') }}"
+                        class="block text-gray-600 hover:text-slate-900 uppercase text-xs tracking-widest py-1">Science</a>
+                </div>
+            </div>
+
+            <a href="{{ url_for('mission') }}"
+                class="block py-2 text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest">Mission</a>
+
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('admin.dashboard') }}"
+                class="block mt-4 text-slate-700 bg-slate-100 px-4 py-2 rounded-sm uppercase text-xs font-bold tracking-widest text-center border border-slate-300 inline-block w-full">
+                <i class="fas fa-terminal mr-2"></i> Dashboard
+            </a>
+            {% endif %}
         </div>
     </nav>
 
@@ -93,21 +180,52 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 p-12 mt-20 border-t border-slate-800 relative overflow-hidden">
-        <div class="container mx-auto text-center relative z-10">
-            <h4 class="text-white font-serif font-black uppercase tracking-widest mb-6 text-2xl">Connect</h4>
-            <div class="mb-8 flex justify-center gap-6">
-                <!-- Dynamic Social Links -->
-                {% for link in social_links %}
-                <a href="{{ link.url }}" target="_blank"
-                    class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-gray-400 hover:text-white hover:border-slate-500 hover:bg-slate-700 transition-all duration-300">
-                    <i class="{{ link.icon_class }} text-lg"></i>
-                </a>
-                {% endfor %}
+    <footer class="bg-white py-16 mt-20 border-t border-gray-200 relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <!-- Branding & Quote -->
+                <div class="col-span-1 border-l-4 border-slate-800 pl-6 flex flex-col justify-center">
+                    <h4 class="text-slate-900 font-serif font-black tracking-tight text-3xl mb-4">VibrocomX</h4>
+                    <p class="text-slate-600 font-serif italic text-lg leading-relaxed">
+                        "In an era of noise, subjective truths, and fleeting narratives, objective analysis is the only
+                        compass."
+                    </p>
+                </div>
+
+                <!-- Footer Imagery Space -->
+                <div class="col-span-1 flex items-center justify-center">
+                    <div
+                        class="w-full max-w-[240px] h-32 bg-gray-50 border border-gray-200 flex flex-col items-center justify-center text-gray-400 rounded-sm">
+                        <i class="fas fa-image text-2xl mb-2"></i>
+                        <span class="text-[10px] uppercase tracking-widest font-bold">Feature Image Space</span>
+                    </div>
+                </div>
+
+                <!-- Connect -->
+                <div class="col-span-1 flex flex-col justify-center md:items-end">
+                    <h4 class="text-slate-800 font-sans font-bold uppercase tracking-widest mb-6 text-sm">Connect</h4>
+                    <div class="flex justify-start gap-4">
+                        {% for link in social_links %}
+                        <a href="{{ link.url }}" target="_blank"
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-300 text-gray-500 hover:text-slate-900 hover:border-slate-500 hover:bg-gray-50 transition-all duration-300 shadow-sm">
+                            <i class="{{ link.icon_class }}"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-            <p class="text-gray-500 text-xs font-sans uppercase tracking-widest">
-                &copy; {{ current_year }} VibrocomX. <span class="text-slate-400">All Rights Reserved.</span>
-            </p>
+
+            <div class="text-center border-t border-gray-200 pt-8 flex items-center justify-center relative">
+                <p
+                    class="text-slate-500 text-xs font-sans uppercase tracking-widest font-semibold flex items-center justify-center gap-2">
+                    &copy; {{ current_year }} VibrocomX. <span>All Rights Reserved.</span>
+                </p>
+                <!-- Subtle Admin Login -->
+                <a href="{{ url_for('admin.login') }}"
+                    class="absolute right-0 text-gray-300 hover:text-slate-800 transition-colors" title="System Access">
+                    <i class="fas fa-key text-[10px]"></i>
+                </a>
+            </div>
         </div>
     </footer>
 
@@ -116,6 +234,15 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
         AOS.init({ offset: 100, duration: 800, easing: 'ease-out-quad', once: true });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-button');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', function () {
+                var menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+        }
     </script>
     {% block scripts %}{% endblock %}
 </body>

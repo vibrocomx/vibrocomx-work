@@ -8,6 +8,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vibrocomx-secret-key-change-in-production'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vibrocomx.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+
+# Ensure upload directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db.init_app(app)
 login_manager = LoginManager()
@@ -28,7 +32,24 @@ def inject_globals():
     breaking_text_setting = SiteSetting.query.filter_by(setting_key='breaking_text').first()
     breaking_text = breaking_text_setting.setting_value if breaking_text_setting else "Global South unites against sanctions"
     
-    return dict(social_links=social_links, show_banner=show_banner, breaking_text=breaking_text)
+    # Dynamic Text Elements
+    hero_tagline_setting = SiteSetting.query.filter_by(setting_key='hero_tagline').first()
+    hero_tagline = hero_tagline_setting.setting_value if hero_tagline_setting else "Truth Beyond the Noise"
+    
+    hero_subtext_setting = SiteSetting.query.filter_by(setting_key='hero_subtext').first()
+    hero_subtext = hero_subtext_setting.setting_value if hero_subtext_setting else "Delivering objective, rigorous analysis on global security, politics, and economics. We cut through the noise to bring you unfiltered facts."
+
+    mission_tagline_setting = SiteSetting.query.filter_by(setting_key='mission_tagline').first()
+    mission_tagline = mission_tagline_setting.setting_value if mission_tagline_setting else "We dismantle narratives, decode global shifts, and deliver rigorous, unapologetic analysis on the forces shaping our world."
+
+    return dict(
+        social_links=social_links, 
+        show_banner=show_banner, 
+        breaking_text=breaking_text,
+        hero_tagline=hero_tagline,
+        hero_subtext=hero_subtext,
+        mission_tagline=mission_tagline
+    )
 
 @app.route('/')
 def index():
@@ -45,8 +66,17 @@ def mission():
 
 @app.route('/analysis')
 def analysis():
-    posts = Post.query.order_by(Post.date_posted.desc()).all()
-    return render_template('posts.html', posts=posts, title="Analysis")
+    category = request.args.get('category')
+    
+    if category:
+        # Filter by category, assuming category is stored with correct casing/matching logic
+        posts = Post.query.filter(Post.category.ilike(category)).order_by(Post.date_posted.desc()).all()
+        page_title = f"{category.capitalize()} Analysis"
+    else:
+        posts = Post.query.order_by(Post.date_posted.desc()).all()
+        page_title = "Latest Analysis"
+        
+    return render_template('posts.html', posts=posts, title=page_title)
 
 @app.route('/article/<slug>')
 def article(slug):

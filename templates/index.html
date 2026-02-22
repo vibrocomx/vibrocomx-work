@@ -2,21 +2,27 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="text-center py-20 bg-white border-b border-gray-200">
-    <h1 class="text-5xl md:text-7xl font-serif font-black text-slate-900 mb-6 tracking-tight" data-aos="fade-down">
-        Give Voice to the <span class="text-slate-500 italic">Unheard</span>
-    </h1>
-    <p class="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-serif" data-aos="fade-up"
-        data-aos-delay="200">
-        Challenging the mainstream narrative. Exposing the injustices ignored by western media.
-        <strong class="text-slate-800 block mt-4 font-sans text-sm uppercase tracking-widest">Truth is our only
-            agenda.</strong>
-    </p>
-    <div class="mt-8" data-aos="zoom-in" data-aos-delay="400">
-        <a href="{{ url_for('mission') }}"
-            class="inline-block bg-slate-900 text-white font-bold py-3 px-8 rounded hover:bg-slate-700 transition-all uppercase tracking-widest text-sm shadow-md">
-            Our Mission
-        </a>
+<section class="text-center py-24 bg-white border-b border-gray-200 relative">
+    <div class="absolute inset-0 bg-slate-50 bg-opacity-50"></div>
+    <div class="relative z-10">
+        <h1 class="text-5xl md:text-7xl font-serif font-black text-slate-900 mb-6 tracking-tight" data-aos="fade-down">
+            <!-- Split tagline if possible, or render outright if no styling needed. Render entirely for safety and let admins style -->
+            {{ hero_tagline | safe }}
+        </h1>
+        <p class="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-serif" data-aos="fade-up"
+            data-aos-delay="200">
+            {{ hero_subtext }}
+        </p>
+        <div class="mt-10 flex justify-center gap-4" data-aos="zoom-in" data-aos-delay="400">
+            <a href="{{ url_for('analysis') }}"
+                class="inline-block bg-slate-900 text-white font-bold py-3 px-8 rounded-sm hover:bg-slate-800 transition-all uppercase tracking-widest text-sm shadow-md border border-slate-900">
+                Read Analysis
+            </a>
+            <a href="{{ url_for('mission') }}"
+                class="inline-block bg-white text-slate-900 font-bold py-3 px-8 rounded-sm hover:bg-gray-50 transition-all uppercase tracking-widest text-sm shadow-sm border border-slate-300">
+                Our Mission
+            </a>
+        </div>
     </div>
 </section>
 
@@ -44,51 +50,109 @@
 </div>
 
 <!-- Latest Analysis Grid -->
-<section class="my-16">
-    <div class="flex justify-between items-end mb-8 border-l-4 border-slate-800 pl-4">
-        <h2 class="text-3xl font-serif font-black text-slate-900 tracking-tight">Latest Analysis</h2>
+<section class="max-w-6xl mx-auto my-16 px-4">
+    <div class="flex justify-between items-end mb-10 border-b border-gray-200 pb-4">
+        <h2 class="text-3xl font-serif font-black text-slate-900 tracking-tight border-l-4 border-slate-800 pl-4">Latest
+            Analysis</h2>
         <a href="{{ url_for('analysis') }}"
-            class="text-slate-600 hover:text-slate-900 transition-colors text-sm uppercase font-bold tracking-widest">View
-            All &rarr;</a>
+            class="text-slate-600 hover:text-slate-900 transition-colors text-xs uppercase font-bold tracking-widest flex items-center">
+            View Archive <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
+        </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for post in posts %}
-        <div class="bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-200 shadow-sm hover:shadow-md group"
-            data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
-            <div class="h-48 bg-gray-100 relative overflow-hidden">
-                {% if post.image_url %}
-                <img src="{{ post.image_url }}" alt="{{ post.title }}"
-                    class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                {% else %}
-                <div class="absolute inset-0 flex items-center justify-center text-gray-300 bg-gray-50">
-                    <i class="fas fa-newspaper text-4xl"></i>
+    <!-- Blog Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Main Featured Post (Occupies 8 cols on desktop) -->
+        <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden" data-aos="fade-right">
+            <div class="relative h-[400px] bg-slate-100 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1541872516941-4fb983e20e8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                    alt="Placeholder"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
                 </div>
-                {% endif %}
-                <span
-                    class="absolute top-2 left-2 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider rounded-sm">
-                    {{ post.category }}
-                </span>
-            </div>
-            <div class="p-6">
-                <h3
-                    class="text-xl font-bold mb-3 text-slate-900 leading-tight font-serif group-hover:text-slate-600 transition-colors">
-                    <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
-                </h3>
-                <p class="text-slate-600 text-sm mb-4 line-clamp-3 font-sans">
-                    {{ post.summary }}
-                </p>
-                <div class="flex justify-between items-center mt-4 border-t border-gray-100 pt-4">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{
-                        post.date_posted.strftime('%b %d, %Y') }}</span>
-                    <a href="{{ url_for('article', slug=post.slug) }}"
-                        class="text-slate-800 font-bold text-xs hover:underline uppercase tracking-wide">
-                        Read Analysis &rarr;
-                    </a>
+
+                <div class="absolute bottom-0 left-0 p-8">
+                    <span
+                        class="bg-white text-slate-900 text-[10px] font-bold px-3 py-1 uppercase tracking-widest mb-4 inline-block shadow-sm">
+                        Global Security
+                    </span>
+                    <h3 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">
+                        <a href="#" class="hover:text-gray-200 transition-colors">The Geopolitics of Resource Scarcity
+                            in 2026</a>
+                    </h3>
+                    <div class="flex items-center text-gray-300 text-xs font-semibold uppercase tracking-widest gap-4">
+                        <span><i class="fas fa-user mr-2"></i> Dr. Ayesha Khan</span>
+                        <span><i class="fas fa-calendar mr-2"></i> Today</span>
+                    </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
+
+        <!-- Sidebar Posts (Occupies 4 cols on desktop) -->
+        <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-left">
+            {% for post in posts[:3] %}
+            <!-- Dynamic Posts from Backend -->
+            <div class="flex gap-4 group">
+                <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-300">
+                        <i class="fas fa-newspaper text-2xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col justify-center">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">{{ post.category
+                        }}</span>
+                    <h4
+                        class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
+                        <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
+                    </h4>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{
+                        post.date_posted.strftime('%b %d, %Y') }}</span>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if posts|length < 3 %} <!-- Add static placeholders if less than 3 dynamic posts exist for structural
+                demo -->
+                <div class="flex gap-4 group {% if posts|length > 0 %}border-t border-gray-100 pt-6{% endif %}">
+                    <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
+                        <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                            alt="Placeholder 1"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span
+                            class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Economics</span>
+                        <h4
+                            class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
+                            <a href="#">Inflation Metrics Re-evaluated by Leading Reserve Banks</a>
+                        </h4>
+                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Yesterday</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 group border-t border-gray-100 pt-6">
+                    <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                            alt="Placeholder 2"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Science</span>
+                        <h4
+                            class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
+                            <a href="#">The Impact of Advanced Silicon Manufacturing on Geopolitics</a>
+                        </h4>
+                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Oct 12,
+                            2026</span>
+                    </div>
+                </div>
+                {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}

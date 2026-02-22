@@ -21,6 +21,7 @@
             <div class="flex justify-between items-center bg-gray-50 p-4 rounded border border-gray-200">
                 <span class="text-slate-700 font-mono text-sm font-semibold">{{ setting.setting_key }}</span>
                 <!-- Updated to use 'admin.toggle_setting' -->
+                {% if setting.setting_value == 'true' or setting.setting_value == 'false' %}
                 <form action="{{ url_for('admin.toggle_setting', setting_key=setting.setting_key) }}" method="POST">
                     <button type="submit"
                         class="px-3 py-1 rounded text-xs font-bold uppercase tracking-wide transition-colors
@@ -28,9 +29,29 @@
                         {{ setting.setting_value }}
                     </button>
                 </form>
+                {% else %}
+                <span
+                    class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-200 text-gray-600">Text
+                    Setting</span>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
+
+        <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Update Text
+            Settings</h3>
+        <p class="text-xs text-gray-500 mb-4">Keys: <code>hero_tagline</code>, <code>hero_subtext</code>,
+            <code>mission_tagline</code>, <code>breaking_text</code></p>
+        <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex flex-col gap-3">
+            <input type="text" name="setting_key" placeholder="Setting Key (e.g. hero_tagline)"
+                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            <textarea name="setting_value" placeholder="New Text Content"
+                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none h-20"></textarea>
+            <button type="submit"
+                class="bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 px-6 rounded uppercase text-xs tracking-wider transition-colors mt-1">
+                Save Text Setting
+            </button>
+        </form>
     </div>
 
     <!-- PAGE CONTENT EDITOR -->
@@ -130,15 +151,22 @@
         </div>
 
         <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6">Create New Post</h3>
-        <form action="{{ url_for('admin.manage_post') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form action="{{ url_for('admin.manage_post') }}" method="POST" enctype="multipart/form-data"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input type="text" name="title" placeholder="Title" required
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             <input type="text" name="slug" placeholder="Slug (optional)"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             <input type="text" name="category" placeholder="Category"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            <input type="text" name="image_url" placeholder="Image URL"
-                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+
+            <div
+                class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
+                <i class="fas fa-image text-slate-400 mr-2 ml-1"></i>
+                <input type="file" name="image_file" accept="image/*"
+                    class="text-slate-500 w-full outline-none bg-transparent">
+            </div>
+
             <textarea name="summary" placeholder="Summary"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-24 md:col-span-2 focus:ring-2 focus:ring-slate-400 outline-none"></textarea>
             <textarea name="content" placeholder="Full Content (HTML)"

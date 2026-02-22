@@ -3,13 +3,19 @@
 {% block title %}Our Mission{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-16 px-4">
-    <h1
-        class="text-4xl md:text-6xl font-serif font-black text-slate-900 mb-10 border-b-4 border-slate-900 pb-4 tracking-tight">
-        Mission Statement
-    </h1>
+<div class="max-w-4xl mx-auto py-20 px-4">
+    <div class="text-center mb-16" data-aos="fade-down">
+        <h1 class="text-4xl md:text-6xl font-serif font-black text-slate-900 tracking-tight mb-6">
+            Our Mission
+        </h1>
+        <p class="text-xl md:text-2xl text-slate-600 font-serif italic max-w-2xl mx-auto leading-relaxed">
+            "{{ mission_tagline }}"
+        </p>
+        <div class="h-1 w-24 bg-slate-900 mx-auto mt-8"></div>
+    </div>
 
-    <div class="prose prose-lg prose-slate max-w-none text-slate-800 font-serif leading-relaxed drop-cap">
+    <div class="prose prose-lg prose-slate max-w-none text-slate-800 font-serif leading-relaxed drop-cap bg-white p-8 md:p-12 shadow-sm border border-gray-200 rounded-sm"
+        data-aos="fade-up" data-aos-delay="200">
         <!-- Render HTML content securely (assuming admin is trusted) -->
         {{ mission_text | safe }}
     </div>
