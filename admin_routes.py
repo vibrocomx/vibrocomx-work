@@ -105,7 +105,8 @@ def manage_link():
             'x': 'fab fa-twitter', # X is twitter icon usually
             'youtube': 'fab fa-youtube',
             'telegram': 'fab fa-telegram',
-            'instagram': 'fab fa-instagram'
+            'instagram': 'fab fa-instagram',
+            'linkedin': 'fab fa-linkedin'
         }
         icon = icon_map.get(platform.lower(), 'fas fa-link')
         

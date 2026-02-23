@@ -1,26 +1,61 @@
 {% extends 'base.html' %}
-{% block title %}Analysis{% endblock %}
+{% block title %}{{ title | default('Analysis Archive') }}{% endblock %}
+
 {% block content %}
-<h1 class="text-5xl font-black text-white mb-12 uppercase tracking-tighter">Analysis</h1>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {% for post in posts %}
-    <!-- Reusing the card component from index for consistency -->
-    <div
-        class="bg-[#0b0c10] rounded-lg overflow-hidden border border-[#222] hover:border-[#ff003c] group transition-all">
-        <div class="h-48 bg-[#15161a] relative">
-            <span
-                class="absolute top-2 left-2 bg-[#ff003c] text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider rounded-sm">
-                {{ post.category }}
-            </span>
+<div class="max-w-6xl mx-auto my-12 px-4">
+    <header class="mb-12 border-b border-gray-200 pb-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-serif font-black text-slate-900 tracking-tight uppercase">{{ title |
+            default('Latest Analysis') }}</h1>
+        <p class="text-slate-500 mt-4 font-serif italic text-lg">Rigorous reporting and objective analysis on global
+            shifts.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for post in posts %}
+        <article
+            class="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full group">
+            <div class="h-48 bg-slate-100 overflow-hidden relative border-b border-gray-100">
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" alt="{{ post.title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-slate-300">
+                    <i class="fas fa-newspaper text-4xl"></i>
+                </div>
+                {% endif %}
+                <span
+                    class="absolute top-4 left-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest shadow-sm">
+                    {{ post.category }}
+                </span>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+                <div class="mb-3 text-xs text-slate-500 uppercase tracking-widest font-semibold">
+                    <i class="fas fa-clock mr-1"></i> {{ post.date_posted.strftime('%B %d, %Y') }}
+                </div>
+                <h3
+                    class="text-xl font-serif font-bold text-slate-900 mb-3 leading-tight group-hover:text-slate-600 transition-colors">
+                    <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
+                </h3>
+                <p class="text-slate-600 font-serif text-sm mb-6 flex-grow line-clamp-3">
+                    {{ post.summary }}
+                </p>
+                <div class="mt-auto border-t border-gray-100 pt-4">
+                    <a href="{{ url_for('article', slug=post.slug) }}"
+                        class="text-sm font-bold text-slate-900 uppercase tracking-widest hover:text-red-700 transition-colors flex items-center">
+                        Read Analysis <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+
+        {% if not posts %}
+        <div
+            class="col-span-full py-20 text-center text-slate-500 bg-gray-50 border border-gray-200 border-dashed rounded-sm">
+            <i class="fas fa-folder-open text-4xl mb-4 text-slate-300"></i>
+            <p class="font-serif italic text-lg text-slate-600">No analysis articles found in this category yet.</p>
         </div>
-        <div class="p-5">
-            <h3 class="text-xl font-bold mb-2 text-white font-mono group-hover:text-[#ff003c] transition-colors">
-                {{ post.title }}
-            </h3>
-            <p class="text-gray-400 text-sm mb-4 line-clamp-3 font-light">{{ post.summary }}</p>
-            <a href="#" class="text-[#ff003c] font-bold text-xs uppercase tracking-wide">Read Analysis &rarr;</a>
-        </div>
+        {% endif %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

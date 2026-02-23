@@ -2,6 +2,20 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block head %}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#rich-content-editor',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 400,
+        skin: 'oxide',
+        content_css: 'default'
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-lg shadow-sm border border-gray-200">
     <h1 class="text-3xl font-serif font-black text-slate-900 tracking-tight">Admin Dashboard</h1>
@@ -41,7 +55,11 @@
         <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Update Text
             Settings</h3>
         <p class="text-xs text-gray-500 mb-4">Keys: <code>hero_tagline</code>, <code>hero_subtext</code>,
-            <code>mission_tagline</code>, <code>breaking_text</code></p>
+            <code>mission_tagline</code>, <code>breaking_text</code>, <br />
+            <strong>New:</strong> <code>featured_quote</code>, <code>quote_author</code>, <br />
+            <strong>Embeds:</strong> <code>youtube_embed</code>, <code>instagram_embed</code>,
+            <code>linkedin_embed</code>
+        </p>
         <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex flex-col gap-3">
             <input type="text" name="setting_key" placeholder="Setting Key (e.g. hero_tagline)"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none">
@@ -169,8 +187,12 @@
 
             <textarea name="summary" placeholder="Summary"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-24 md:col-span-2 focus:ring-2 focus:ring-slate-400 outline-none"></textarea>
-            <textarea name="content" placeholder="Full Content (HTML)"
-                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-40 md:col-span-2 font-mono focus:ring-2 focus:ring-slate-400 outline-none"></textarea>
+            <div class="md:col-span-2">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Full Content (HTML/Rich
+                    Text)</label>
+                <textarea id="rich-content-editor" name="content" placeholder="Full Content"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-40 focus:ring-2 focus:ring-slate-400 outline-none"></textarea>
+            </div>
             <button type="submit"
                 class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded md:col-span-2 uppercase text-xs tracking-wider transition-colors mt-2">
                 Publish Post

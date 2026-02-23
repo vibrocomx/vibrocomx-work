@@ -42,13 +42,36 @@ def inject_globals():
     mission_tagline_setting = SiteSetting.query.filter_by(setting_key='mission_tagline').first()
     mission_tagline = mission_tagline_setting.setting_value if mission_tagline_setting else "We dismantle narratives, decode global shifts, and deliver rigorous, unapologetic analysis on the forces shaping our world."
 
+    featured_quote_setting = SiteSetting.query.filter_by(setting_key='featured_quote').first()
+    featured_quote = featured_quote_setting.setting_value if featured_quote_setting else "Truth acts as a vibration through the noise. We bring our rigorous reporting directly to the platforms you use."
+    
+    quote_author_setting = SiteSetting.query.filter_by(setting_key='quote_author').first()
+    quote_author = quote_author_setting.setting_value if quote_author_setting else "VibrocomX Editorial Board"
+
+    # Using the provided link as the default fallback for YouTube
+    youtube_embed_setting = SiteSetting.query.filter_by(setting_key='youtube_embed').first()
+    youtube_embed = youtube_embed_setting.setting_value if youtube_embed_setting else "https://youtube.com/@vibrocomx?si=Jw6-Wy_Sr38VAKwc"
+
+    # Using the provided link as the default fallback for Instagram
+    instagram_embed_setting = SiteSetting.query.filter_by(setting_key='instagram_embed').first()
+    instagram_embed = instagram_embed_setting.setting_value if instagram_embed_setting else "https://www.instagram.com/vibrocomx?igsh=MTdreGJnYnlhb2Vlbw=="
+
+    # Using the provided link as the default fallback for LinkedIn
+    linkedin_embed_setting = SiteSetting.query.filter_by(setting_key='linkedin_embed').first()
+    linkedin_embed = linkedin_embed_setting.setting_value if linkedin_embed_setting else "https://www.linkedin.com/in/vibrocomx"
+
     return dict(
         social_links=social_links, 
         show_banner=show_banner, 
         breaking_text=breaking_text,
         hero_tagline=hero_tagline,
         hero_subtext=hero_subtext,
-        mission_tagline=mission_tagline
+        mission_tagline=mission_tagline,
+        featured_quote=featured_quote,
+        quote_author=quote_author,
+        youtube_embed=youtube_embed,
+        instagram_embed=instagram_embed,
+        linkedin_embed=linkedin_embed
     )
 
 @app.route('/')

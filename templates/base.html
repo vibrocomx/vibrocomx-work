@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VibrocomX{% endblock %} | Alternative Media</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link
@@ -79,8 +79,10 @@
         <div class="container mx-auto flex justify-between items-center">
             <!-- Logo -->
             <a href="{{ url_for('index') }}" class="flex items-center group">
-                <i class="fas fa-newspaper text-slate-800 text-2xl mr-3 group-hover:scale-110 transition-transform"></i>
-                <span class="text-3xl font-serif font-black text-slate-900 tracking-tight">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="VibrocomX Logo"
+                    class="h-12 w-auto mr-3 group-hover:scale-105 transition-transform drop-shadow-sm rounded-sm"
+                    onerror="this.onerror=null; this.outerHTML='<i class=\'fas fa-newspaper text-slate-800 text-2xl mr-3 group-hover:scale-110 transition-transform\'></i>'">
+                <span class="text-3xl font-serif font-black text-slate-900 tracking-tight hidden sm:block">
                     VibrocomX
                 </span>
             </a>
@@ -193,12 +195,10 @@
                 </div>
 
                 <!-- Footer Imagery Space -->
-                <div class="col-span-1 flex items-center justify-center">
-                    <div
-                        class="w-full max-w-[240px] h-32 bg-gray-50 border border-gray-200 flex flex-col items-center justify-center text-gray-400 rounded-sm">
-                        <i class="fas fa-image text-2xl mb-2"></i>
-                        <span class="text-[10px] uppercase tracking-widest font-bold">Feature Image Space</span>
-                    </div>
+                <div class="col-span-1 flex items-center justify-center group">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="VibrocomX Logo"
+                        class="max-h-32 w-auto object-contain rounded-md shadow-lg group-hover:scale-105 transition-transform duration-500"
+                        onerror="this.onerror=null; this.outerHTML='<div class=\'w-full max-w-[240px] h-32 bg-gray-50 border border-gray-200 flex flex-col items-center justify-center text-gray-400 rounded-sm\'><i class=\'fas fa-image text-2xl mb-2\'></i><span class=\'text-[10px] uppercase tracking-widest font-bold\'>Feature Image Space</span></div>'">
                 </div>
 
                 <!-- Connect -->

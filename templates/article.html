@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} | Analysis{% endblock %}
+
+{% block content %}
+<article class="max-w-4xl mx-auto py-12 px-4 bg-white shadow-sm border border-gray-200 mt-10" data-aos="fade-up">
+    <header class="mb-10 text-center border-b border-gray-100 pb-8">
+        <span class="text-xs font-bold text-red-600 uppercase tracking-widest mb-4 inline-block">{{ post.category
+            }}</span>
+        <h1 class="text-4xl md:text-5xl font-serif font-black text-slate-900 leading-tight mb-4">{{ post.title }}</h1>
+        <div
+            class="flex justify-center items-center text-slate-500 text-sm font-sans uppercase tracking-widest font-semibold gap-6">
+            <span><i class="fas fa-calendar-alt mr-2"></i>{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+        </div>
+    </header>
+
+    {% if post.image_url %}
+    <div class="mb-10 overflow-hidden rounded-sm border border-gray-100 shadow-sm" data-aos="fade-up"
+        data-aos-delay="100">
+        <img src="{{ post.image_url }}" alt="{{ post.title }}" class="w-full h-auto object-cover max-h-[500px]">
+    </div>
+    {% endif %}
+
+    <div class="prose prose-lg prose-slate max-w-none font-serif text-slate-800 leading-relaxed whitespace-pre-wrap"
+        data-aos="fade-up" data-aos-delay="200">
+        <!-- Render WYSIWYG Content Safely -->
+        {{ post.content | safe }}
+    </div>
+
+    <footer class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center bg-gray-50 p-6">
+        <div>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Share Analysis</span>
+            <div class="flex gap-3">
+                <a href="#" class="text-slate-400 hover:text-[#1DA1F2] transition-colors"><i
+                        class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="text-slate-400 hover:text-[#0A66C2] transition-colors"><i
+                        class="fab fa-linkedin text-xl"></i></a>
+                <a href="#" class="text-slate-400 hover:text-red-600 transition-colors"><i
+                        class="fas fa-envelope text-xl"></i></a>
+            </div>
+        </div>
+        <a href="{{ url_for('analysis') }}"
+            class="text-sm font-bold text-slate-900 border border-slate-900 px-6 py-2 uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">
+            Back to Archive
+        </a>
+    </footer>
+</article>
+
+<style>
+    /* Enhance prose styling for TinyMCE content if needed */
+    .prose h1,
+    .prose h2,
+    .prose h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        color: #0f172a;
+        margin-top: 2em;
+        margin-bottom: 0.5em;
+        letter-spacing: -0.025em;
+    }
+
+    .prose p {
+        margin-bottom: 1.5em;
+    }
+
+    .prose a {
+        color: #dc2626;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .prose a:hover {
+        color: #991b1b;
+    }
+
+    .prose blockquote {
+        border-left: 4px solid #dc2626;
+        padding-left: 1.5rem;
+        font-style: italic;
+        color: #475569;
+        background: #f8fafc;
+        padding: 1.5rem;
+    }
+</style>
+{% endblock %}

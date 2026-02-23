@@ -26,6 +26,19 @@
     </div>
 </section>
 
+<!-- Featured Quote Replacement for Marquee -->
+<div class="bg-gray-50 py-12 border-y border-gray-200 shadow-inner relative" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <i class="fas fa-quote-left text-4xl text-slate-300 mb-6 block"></i>
+        <blockquote class="text-2xl md:text-3xl font-serif font-black text-slate-800 leading-snug tracking-tight mb-6">
+            "{{ featured_quote | safe }}"
+        </blockquote>
+        <cite class="text-sm font-bold uppercase tracking-widest text-red-700 not-italic block">
+            &mdash; {{ quote_author | safe }}
+        </cite>
+    </div>
+</div>
+
 <!-- Next Broadcast (Countdown) -->
 <div class="border border-gray-200 p-6 my-12 bg-white rounded-lg shadow-sm relative overflow-hidden max-w-4xl mx-auto"
     data-aos="flip-up">
@@ -65,8 +78,8 @@
         <!-- Main Featured Post (Occupies 8 cols on desktop) -->
         <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden" data-aos="fade-right">
             <div class="relative h-[400px] bg-slate-100 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1541872516941-4fb983e20e8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                    alt="Placeholder"
+                <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                    alt="Editorial Desktop"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
                 </div>
@@ -152,6 +165,145 @@
                     </div>
                 </div>
                 {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Social Media & Multi-Platform Integration -->
+<section class="bg-slate-900 py-20 border-y border-gray-800 text-white">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16 border-b border-gray-800 pb-12">
+            <div data-aos="fade-right">
+                <h2 class="text-4xl md:text-5xl font-serif font-black text-white mb-6 uppercase tracking-tight">
+                    Beyond the <span class="text-red-600">Article</span>
+                </h2>
+                <p class="text-lg text-gray-400 font-serif leading-relaxed italic border-l-4 border-red-600 pl-4">
+                    "Information is not just read; it is experienced. We bring our rigorous reporting directly to the
+                    platforms you use."
+                </p>
+            </div>
+            <div class="flex justify-start md:justify-end gap-4" data-aos="fade-left">
+                <a href="#"
+                    class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-gray-400 hover:text-white hover:bg-red-600 hover:border-red-600 transition-all shadow-lg group">
+                    <i class="fab fa-youtube text-xl group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="#"
+                    class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-gray-400 hover:text-white hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-red-500 hover:to-purple-500 hover:border-transparent transition-all shadow-lg group">
+                    <i class="fab fa-instagram text-xl group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="#"
+                    class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-gray-400 hover:text-white hover:bg-[#0077B5] hover:border-[#0077B5] transition-all shadow-lg group">
+                    <i class="fab fa-linkedin-in text-xl group-hover:scale-110 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- YouTube Card / Embed -->
+            <div class="bg-slate-800 rounded-sm border border-slate-700 overflow-hidden shadow-xl" data-aos="fade-up"
+                data-aos-delay="100">
+                <div class="p-4 border-b border-gray-700 flex items-center gap-3">
+                    <i class="fab fa-youtube text-2xl text-red-500"></i>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400">YouTube Channel</span>
+                </div>
+                <!-- YouTube Embed Area -->
+                <div class="w-full flex items-center justify-center bg-black min-h-[200px]">
+                    {% if youtube_embed %}
+                    {% if youtube_embed.startswith('http') %}
+                    <!-- Raw Link Provided: Render a sleek clickable banner -->
+                    <a href="{{ youtube_embed }}" target="_blank"
+                        class="w-full h-full flex flex-col items-center justify-center p-8 group hover:bg-slate-900 transition-colors">
+                        <div
+                            class="w-16 h-12 bg-red-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform mb-4">
+                            <i class="fas fa-play text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-white font-serif font-bold text-lg mb-1">VibrocomX on YouTube</h3>
+                        <p class="text-red-400 text-xs font-bold uppercase tracking-widest group-hover:underline">Visit
+                            Channel &rarr;</p>
+                    </a>
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center overflow-hidden">
+                        {{ youtube_embed | safe }}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center p-8 text-gray-500">
+                        <i class="fas fa-video text-3xl mb-3 block"></i>
+                        <p class="text-sm">Admin: Add 'youtube_embed' setting to display video here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Instagram Card / Embed -->
+            <div class="bg-slate-800 rounded-sm border border-slate-700 overflow-hidden shadow-xl" data-aos="fade-up"
+                data-aos-delay="200">
+                <div class="p-4 border-b border-gray-700 flex items-center gap-3">
+                    <i class="fab fa-instagram text-2xl text-pink-500"></i>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Instagram Feed</span>
+                </div>
+                <!-- Instagram Embed Area -->
+                <div class="w-full flex items-center justify-center bg-white min-h-[200px] overflow-hidden">
+                    {% if instagram_embed %}
+                    <div class="w-full flex justify-center scale-90 origin-top">
+                        {% if instagram_embed.startswith('http') %}
+                        <blockquote class="instagram-media" data-instgrm-permalink="{{ instagram_embed }}"
+                            data-instgrm-version="14"
+                            style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                        </blockquote>
+                        <script async src="//www.instagram.com/embed.js"></script>
+                        {% else %}
+                        {{ instagram_embed | safe }}
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="text-center p-8 text-slate-400">
+                        <i class="fas fa-camera text-3xl mb-3 block"></i>
+                        <p class="text-sm">Admin: Add 'instagram_embed' setting to display post here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- LinkedIn Card / Embed -->
+            <div class="bg-slate-800 rounded-sm border border-slate-700 overflow-hidden shadow-xl" data-aos="fade-up"
+                data-aos-delay="300">
+                <div class="p-4 border-b border-gray-700 flex items-center gap-3">
+                    <i class="fab fa-linkedin-in text-2xl text-[#0077B5]"></i>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400">LinkedIn Updates</span>
+                </div>
+                <!-- LinkedIn Embed Area -->
+                <div class="w-full flex items-center justify-center bg-white min-h-[200px] overflow-hidden">
+                    {% if linkedin_embed %}
+                    {% if linkedin_embed.startswith('http') %}
+                    <!-- Raw Link Provided: Render a sleek clickable banner -->
+                    <a href="{{ linkedin_embed }}" target="_blank"
+                        class="w-full h-full flex flex-col items-center justify-center p-8 bg-[#0077B5] group hover:bg-[#005582] transition-colors relative overflow-hidden">
+                        <i
+                            class="fab fa-linkedin-in text-white text-6xl opacity-20 absolute -right-2 -bottom-2 group-hover:scale-110 transition-transform"></i>
+                        <div
+                            class="w-12 h-12 bg-white text-[#0077B5] rounded-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform mb-4 relative z-10">
+                            <i class="fab fa-linkedin-in text-2xl"></i>
+                        </div>
+                        <h3 class="text-white font-serif font-bold text-lg text-center relative z-10 mb-1">Connect with
+                            us</h3>
+                        <p
+                            class="text-blue-200 text-xs font-bold uppercase tracking-widest relative z-10 group-hover:underline">
+                            View Profile &rarr;</p>
+                    </a>
+                    {% else %}
+                    <div class="w-full flex justify-center scale-90 origin-top">
+                        {{ linkedin_embed | safe }}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center p-8 text-slate-400">
+                        <i class="fas fa-briefcase text-3xl mb-3 block"></i>
+                        <p class="text-sm">Admin: Add 'linkedin_embed' setting to display post here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </section>
