@@ -53,10 +53,10 @@
                 <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ breaking_text }}
             </span>
             <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
-                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> Developing Stories
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ developing_stories_text }}
             </span>
             <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center opacity-75">
-                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> Critical Updates
+                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> {{ critical_updates_text }}
             </span>
         </div>
         <div class="animate-marquee flex items-center pr-8" aria-hidden="true">
@@ -64,10 +64,10 @@
                 <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ breaking_text }}
             </span>
             <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center">
-                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> Developing Stories
+                <i class="fas fa-circle text-[8px] mr-3 text-red-300 animate-pulse"></i> {{ developing_stories_text }}
             </span>
             <span class="mx-8 text-white font-serif text-sm uppercase tracking-widest flex items-center opacity-75">
-                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> Critical Updates
+                <i class="fas fa-bolt text-[10px] mr-3 text-yellow-300"></i> {{ critical_updates_text }}
             </span>
         </div>
     </div>
@@ -184,9 +184,9 @@
     <!-- Footer -->
     <footer class="bg-white py-16 mt-20 border-t border-gray-200 relative overflow-hidden">
         <div class="container mx-auto px-4 relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-12 mb-12">
                 <!-- Branding & Quote -->
-                <div class="col-span-1 border-l-4 border-slate-800 pl-6 flex flex-col justify-center">
+                <div class="border-l-4 border-slate-800 pl-6 flex flex-col justify-center md:max-w-xl">
                     <h4 class="text-slate-900 font-serif font-black tracking-tight text-3xl mb-4">VibrocomX</h4>
                     <p class="text-slate-600 font-serif italic text-lg leading-relaxed">
                         "In an era of noise, subjective truths, and fleeting narratives, objective analysis is the only
@@ -194,24 +194,22 @@
                     </p>
                 </div>
 
-                <!-- Footer Imagery Space -->
-                <div class="col-span-1 flex items-center justify-center group">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="VibrocomX Logo"
-                        class="max-h-32 w-auto object-contain rounded-md shadow-lg group-hover:scale-105 transition-transform duration-500"
-                        onerror="this.onerror=null; this.outerHTML='<div class=\'w-full max-w-[240px] h-32 bg-gray-50 border border-gray-200 flex flex-col items-center justify-center text-gray-400 rounded-sm\'><i class=\'fas fa-image text-2xl mb-2\'></i><span class=\'text-[10px] uppercase tracking-widest font-bold\'>Feature Image Space</span></div>'">
-                </div>
-
                 <!-- Connect -->
-                <div class="col-span-1 flex flex-col justify-center md:items-end">
+                <div class="flex flex-col justify-center md:items-end shrink-0">
                     <h4 class="text-slate-800 font-sans font-bold uppercase tracking-widest mb-6 text-sm">Connect</h4>
                     <div class="flex justify-start gap-4">
-                        {% for link in social_links %}
-                        <a href="{% if not link.url.startswith('http') %}https://{{ link.url }}{% else %}{{ link.url }}{% endif %}"
-                            target="_blank"
+                        <a href="{{ linkedin_embed }}" target="_blank"
                             class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-300 text-gray-500 hover:text-slate-900 hover:border-slate-500 hover:bg-gray-50 transition-all duration-300 shadow-sm">
-                            <i class="{{ link.icon_class }}"></i>
+                            <i class="fab fa-linkedin-in"></i>
                         </a>
-                        {% endfor %}
+                        <a href="{{ youtube_embed }}" target="_blank"
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-300 text-gray-500 hover:text-slate-900 hover:border-slate-500 hover:bg-gray-50 transition-all duration-300 shadow-sm">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="{{ instagram_embed }}" target="_blank"
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-300 text-gray-500 hover:text-slate-900 hover:border-slate-500 hover:bg-gray-50 transition-all duration-300 shadow-sm">
+                            <i class="fab fa-instagram"></i>
+                        </a>
                     </div>
                 </div>
             </div>

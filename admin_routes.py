@@ -140,7 +140,7 @@ def manage_founder():
             filename = secure_filename(file.filename)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            image_url = f"/static/uploads/{filename}"
+            image_url = f"/static/images/{filename}"
     
     # Simple add for now (could extend to edit if id passed)
     founder = Founder(name=name, role=role, bio=bio, image_url=image_url)
@@ -176,7 +176,7 @@ def manage_post():
             filename = secure_filename(file.filename)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            image_url = f"/static/uploads/{filename}"
+            image_url = f"/static/images/{filename}"
     
     if not slug:
         slug = title.lower().replace(' ', '-')

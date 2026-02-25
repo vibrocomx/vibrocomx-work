@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vibrocomx-secret-key-change-in-production'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vibrocomx.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images')
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -31,6 +31,12 @@ def inject_globals():
     
     breaking_text_setting = SiteSetting.query.filter_by(setting_key='breaking_text').first()
     breaking_text = breaking_text_setting.setting_value if breaking_text_setting else "Global South unites against sanctions"
+    
+    developing_text_setting = SiteSetting.query.filter_by(setting_key='developing_stories_text').first()
+    developing_stories_text = developing_text_setting.setting_value if developing_text_setting else "Developing Stories"
+    
+    critical_text_setting = SiteSetting.query.filter_by(setting_key='critical_updates_text').first()
+    critical_updates_text = critical_text_setting.setting_value if critical_text_setting else "Critical Updates"
     
     # Dynamic Text Elements
     hero_tagline_setting = SiteSetting.query.filter_by(setting_key='hero_tagline').first()
@@ -64,6 +70,8 @@ def inject_globals():
         social_links=social_links, 
         show_banner=show_banner, 
         breaking_text=breaking_text,
+        developing_stories_text=developing_stories_text,
+        critical_updates_text=critical_updates_text,
         hero_tagline=hero_tagline,
         hero_subtext=hero_subtext,
         mission_tagline=mission_tagline,
