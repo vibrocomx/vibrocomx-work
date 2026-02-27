@@ -39,27 +39,60 @@
     </div>
 </div>
 
-<!-- Next Broadcast (Countdown) -->
-<div class="border border-gray-200 p-6 my-12 bg-white rounded-lg shadow-sm relative overflow-hidden max-w-4xl mx-auto"
-    data-aos="flip-up">
-    <div class="absolute top-0 right-0 bg-red-700 text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">
-        Upcoming Live
-    </div>
+<!-- Upcoming Broadcast / Analysis Timer -->
+<div class="mb-12" data-aos="fade-up">
+    {% if show_broadcast == 'true' %}
+    <div
+        class="border border-gray-200 bg-white rounded-sm p-6 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-sm">
+        <div
+            class="absolute top-0 right-0 bg-red-700 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest z-10">
+            Upcoming Live
+        </div>
+        <div id="broadcast-data" data-datetime="{{ broadcast_datetime }}" class="hidden"></div>
+        <div class="z-10 mb-6 md:mb-0">
+            <div class="flex items-center text-red-700 mb-2">
+                <span class="relative flex h-3 w-3 mr-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Next Broadcast</span>
+            </div>
+            <h2 class="text-3xl font-serif font-black text-slate-900 tracking-tight">{{ broadcast_title }}</h2>
+            <p class="text-slate-500 italic mt-1 font-serif">{{ broadcast_subtitle }}</p>
+        </div>
 
-    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center">
-        <div>
-            <h3 class="text-slate-500 text-xs uppercase tracking-widest mb-2"><i
-                    class="fas fa-satellite-dish mr-2 text-red-600 animate-pulse"></i>Next Broadcast</h3>
-            <h2 class="text-2xl md:text-3xl font-serif font-bold text-slate-900 mb-1">Neo-Colonialism in the Digital Age
-            </h2>
-            <p class="text-slate-600 font-semibold text-lg font-serif italic">with Dr. Ayesha Khan</p>
-        </div>
-        <div class="mt-4 md:mt-0 text-right">
-            <span id="countdown"
-                class="block text-4xl font-black font-sans text-slate-900 tracking-tighter">00:00:00</span>
-            <span class="text-xs text-slate-500 uppercase tracking-wide">Time Remaining</span>
+        <div class="flex gap-4 text-center z-10">
+            <div class="flex flex-col">
+                <span id="days"
+                    class="text-3xl font-black text-slate-900 tracking-tight leading-none bg-gray-50 p-3 rounded border border-gray-100 min-w-[70px]">00</span>
+                <span class="text-[9px] uppercase font-bold text-slate-400 mt-2 tracking-widest">Days</span>
+            </div>
+            <div class="flex flex-col">
+                <span id="hours"
+                    class="text-3xl font-black text-slate-900 tracking-tight leading-none bg-gray-50 p-3 rounded border border-gray-100 min-w-[70px]">00</span>
+                <span class="text-[9px] uppercase font-bold text-slate-400 mt-2 tracking-widest">Hours</span>
+            </div>
+            <div class="flex flex-col">
+                <span id="mins"
+                    class="text-3xl font-black text-slate-900 tracking-tight leading-none bg-gray-50 p-3 rounded border border-gray-100 min-w-[70px]">00</span>
+                <span class="text-[9px] uppercase font-bold text-slate-400 mt-2 tracking-widest">Mins</span>
+            </div>
+            <div class="flex flex-col">
+                <span id="secs"
+                    class="text-3xl font-black text-slate-900 tracking-tight leading-none bg-gray-50 p-3 rounded border border-gray-100 mb-0 min-w-[70px] text-red-700">00</span>
+                <span class="text-[9px] uppercase font-bold text-slate-400 mt-2 tracking-widest">Secs</span>
+            </div>
         </div>
     </div>
+    {% else %}
+    <!-- Fallback Quote Banner -->
+    <div class="border border-gray-200 bg-gray-50 rounded-sm p-8 text-center shadow-sm">
+        <blockquote class="text-xl md:text-2xl font-serif italic text-slate-700 leading-relaxed max-w-4xl mx-auto">
+            "{{ broadcast_fallback_quote }}"
+        </blockquote>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Latest Analysis Grid -->
@@ -330,30 +363,47 @@
 
 {% block scripts %}
 <script>
-    // Countdown Timer logic injected here or loaded from script.js
-    // Re-using the logic we wrote earlier but adapting for Jinja if needed.
-    // Ideally, keep it in static/script.js, but ensures it runs.
-    document.addEventListener('DOMContentLoaded', () => {
-        const countdownElement = document.getElementById('countdown');
-        if (countdownElement) {
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 2); // Mock date
-
-            function update() {
-                const now = new Date();
-                const diff = targetDate - now;
-                if (diff <= 0) return;
-
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                countdownElement.innerText =
-                    `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-            }
-            setInterval(update, 1000);
-            update();
-        }
+    // AOS Initialization
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50
     });
+
+    // Countdown Timer Logic
+    const broadcastData = document.getElementById('broadcast-data');
+    if (broadcastData) {
+        const dateStr = broadcastData.getAttribute('data-datetime');
+        const countDownDate = new Date(dateStr).getTime();
+
+        const x = setInterval(function () {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("days").innerHTML = "00";
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("mins").innerHTML = "00";
+                document.getElementById("secs").innerHTML = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const format = (val) => val < 10 ? '0' + val : val;
+
+            const daysEl = document.getElementById("days");
+            if (daysEl) {
+                daysEl.innerHTML = format(days);
+                document.getElementById("hours").innerHTML = format(hours);
+                document.getElementById("mins").innerHTML = format(mins);
+                document.getElementById("secs").innerHTML = format(secs);
+            }
+        }, 1000);
+    }
 </script>
 {% endblock %}

@@ -81,6 +81,22 @@ def inject_globals():
     
     homepage_layout_setting = SiteSetting.query.filter_by(setting_key='homepage_layout').first()
     homepage_layout = homepage_layout_setting.setting_value if homepage_layout_setting else "featured"
+    
+    # Broadcast configuration
+    show_broadcast_setting = SiteSetting.query.filter_by(setting_key='show_broadcast').first()
+    show_broadcast = show_broadcast_setting.setting_value if show_broadcast_setting else 'true'
+    
+    broadcast_title_setting = SiteSetting.query.filter_by(setting_key='broadcast_title').first()
+    broadcast_title = broadcast_title_setting.setting_value if broadcast_title_setting else 'Neo-Colonialism in the Digital Age'
+    
+    broadcast_subtitle_setting = SiteSetting.query.filter_by(setting_key='broadcast_subtitle').first()
+    broadcast_subtitle = broadcast_subtitle_setting.setting_value if broadcast_subtitle_setting else 'with Dr. Ayesha Khan'
+    
+    broadcast_datetime_setting = SiteSetting.query.filter_by(setting_key='broadcast_datetime').first()
+    broadcast_datetime = broadcast_datetime_setting.setting_value if broadcast_datetime_setting else '2026-10-15T14:30'
+    
+    broadcast_fallback_quote_setting = SiteSetting.query.filter_by(setting_key='broadcast_fallback_quote').first()
+    broadcast_fallback_quote = broadcast_fallback_quote_setting.setting_value if broadcast_fallback_quote_setting else 'Technology must serve humanity, not subjugate it.'
 
     return dict(
         social_links=social_links, 
@@ -97,7 +113,12 @@ def inject_globals():
         instagram_embed=instagram_embed,
         linkedin_embed=linkedin_embed,
         site_logo=site_logo,
-        homepage_layout=homepage_layout
+        homepage_layout=homepage_layout,
+        show_broadcast=show_broadcast,
+        broadcast_title=broadcast_title,
+        broadcast_subtitle=broadcast_subtitle,
+        broadcast_datetime=broadcast_datetime,
+        broadcast_fallback_quote=broadcast_fallback_quote
     )
 
 @app.route('/')

@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder
 
 admin_bp = Blueprint('admin', __name__)
@@ -190,6 +191,51 @@ def manage_post():
     summary = request.form.get('summary')
     content = request.form.get('content')
     category = request.form.get('category')
+    author = request.form.get('author') or "VibrocomX Team"
+    
+    date_posted_str = request.form.get('date_posted')
+    if date_posted_str:
+        try:
+            date_posted = datetime.fromisoformat(date_posted_str)
+        except ValueError:
+            date_posted = datetime.utcnow()
+    else:
+        date_posted = datetime.utcnow()
+    
+    # Handle File Upload
+    image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
+    if 'image_file' in request.files:
+        file = request.files['image_file']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            image_url = f"/static/images/{filename}"
+    
+    if not slug:
+        slug = title.lower().replace(' ', '-')
+        
+    post = Post(title=title, slug=slug, summary=summary, content=content, 
+                category=category, image_url=image_url, author=author, date_posted=date_posted, is_published=True)
+    db.session.add(post)
+    db.session.commit()
+    flash(f'Post "{title}" created.', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/upload-image', methods=['POST'])
+@login_required
+def upload_image():
+    if 'file' in request.files:
+        file = request.files['file']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            return jsonify({'location': f'/static/images/{filename}'})
+    return jsonify({'error': 'Failed to upload image.'}), 400
+    summary = request.form.get('summary')
+    content = request.form.get('content')
+    category = request.form.get('category')
     
     # Handle File Upload
     image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
@@ -223,6 +269,14 @@ def edit_post(id):
         post.content = request.form.get('content')
         post.category = request.form.get('category')
         post.is_published = request.form.get('is_published') == 'on'
+        post.author = request.form.get('author') or post.author
+        
+        date_posted_str = request.form.get('date_posted')
+        if date_posted_str:
+            try:
+                post.date_posted = datetime.fromisoformat(date_posted_str)
+            except ValueError:
+                pass
         
         # Handle File Upload
         if 'image_file' in request.files:

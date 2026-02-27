@@ -11,7 +11,9 @@
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
         height: 400,
         skin: 'oxide',
-        content_css: 'default'
+        content_css: 'default',
+        images_upload_url: '/admin/upload-image',
+        automatic_uploads: true
     });
 </script>
 {% endblock %}
@@ -71,6 +73,54 @@
                 Save Text Setting
             </button>
         </form>
+
+        <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Broadcast Banner
+            & Countdown</h3>
+        <div class="flex flex-col gap-2 mb-6">
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="show_broadcast">
+                <select name="setting_value"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none w-full">
+                    <option value="true" {% if show_broadcast=='true' %}selected{% endif %}>Show Live Countdown Banner
+                    </option>
+                    <option value="false" {% if show_broadcast=='false' %}selected{% endif %}>Show Fallback Quote Only
+                    </option>
+                </select>
+                <button type="submit"
+                    class="bg-slate-800 text-white px-4 rounded text-xs uppercase font-bold">Save</button>
+            </form>
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="broadcast_title">
+                <input type="text" name="setting_value" placeholder="Broadcast Title (e.g. Neo-Colonialism)"
+                    value="{{ broadcast_title }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm w-full outline-none">
+                <button type="submit"
+                    class="bg-slate-800 text-white px-4 rounded text-xs uppercase font-bold">Save</button>
+            </form>
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="broadcast_subtitle">
+                <input type="text" name="setting_value" placeholder="Subtitle (e.g. with Dr. Ayesha Khan)"
+                    value="{{ broadcast_subtitle }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm w-full outline-none">
+                <button type="submit"
+                    class="bg-slate-800 text-white px-4 rounded text-xs uppercase font-bold">Save</button>
+            </form>
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="broadcast_datetime">
+                <input type="datetime-local" name="setting_value" value="{{ broadcast_datetime }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm w-full outline-none">
+                <button type="submit"
+                    class="bg-slate-800 text-white px-4 rounded text-xs uppercase font-bold">Save</button>
+            </form>
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="broadcast_fallback_quote">
+                <input type="text" name="setting_value" placeholder="Fallback Quote when countdown is off"
+                    value="{{ broadcast_fallback_quote }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm w-full outline-none">
+                <button type="submit"
+                    class="bg-slate-800 text-white px-4 rounded text-xs uppercase font-bold">Save</button>
+            </form>
+        </div>
 
         <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Site Branding
         </h3>
@@ -205,6 +255,15 @@
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             <input type="text" name="slug" placeholder="Slug (optional)"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+
+            <input type="text" name="author" placeholder="Author (Default: VibrocomX Team)"
+                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            <div class="flex items-center gap-2">
+                <label class="text-xs uppercase font-bold text-slate-500 whitespace-nowrap">Date:</label>
+                <input type="datetime-local" name="date_posted"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
             <input type="text" name="category" placeholder="Category"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
 
@@ -220,6 +279,8 @@
             <div class="md:col-span-2">
                 <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Full Content (HTML/Rich
                     Text)</label>
+                <p class="text-[10px] text-gray-500 mb-2 italic">You can insert images inline using the toolbar Image
+                    button.</p>
                 <textarea id="rich-content-editor" name="content" placeholder="Full Content"
                     class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-40 focus:ring-2 focus:ring-slate-400 outline-none"></textarea>
             </div>
