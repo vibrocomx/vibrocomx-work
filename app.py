@@ -18,6 +18,16 @@ login_manager = LoginManager()
 login_manager.login_view = 'admin.login'
 login_manager.init_app(app)
 
+from sqlalchemy import text
+with app.app_context():
+    db.create_all()
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(text("ALTER TABLE post ADD COLUMN is_published BOOLEAN DEFAULT 1;"))
+            conn.commit()
+    except Exception:
+        pass # Column already exists or table issue
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -66,8 +76,11 @@ def inject_globals():
     linkedin_embed_setting = SiteSetting.query.filter_by(setting_key='linkedin_embed').first()
     linkedin_embed = linkedin_embed_setting.setting_value if linkedin_embed_setting else "https://www.linkedin.com/in/vibrocomx"
 
-    site_logo_setting = SiteSetting.query.filter_by(setting_key='site_logo_url').first()
-    site_logo_url = site_logo_setting.setting_value if site_logo_setting else url_for('static', filename='logo.png')
+    site_logo_setting = SiteSetting.query.filter_by(setting_key='site_logo').first()
+    site_logo = site_logo_setting.setting_value if site_logo_setting else url_for('static', filename='logo.png')
+    
+    homepage_layout_setting = SiteSetting.query.filter_by(setting_key='homepage_layout').first()
+    homepage_layout = homepage_layout_setting.setting_value if homepage_layout_setting else "featured"
 
     return dict(
         social_links=social_links, 
@@ -83,13 +96,13 @@ def inject_globals():
         youtube_embed=youtube_embed,
         instagram_embed=instagram_embed,
         linkedin_embed=linkedin_embed,
-        site_logo_url=site_logo_url
+        site_logo=site_logo,
+        homepage_layout=homepage_layout
     )
 
 @app.route('/')
 def index():
-
-    posts = Post.query.order_by(Post.date_posted.desc()).limit(4).all()
+    posts = Post.query.filter_by(is_published=True).order_by(Post.date_posted.desc()).all()
     return render_template('index.html', posts=posts)
 
 @app.route('/mission')

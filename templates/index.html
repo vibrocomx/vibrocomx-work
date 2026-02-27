@@ -73,20 +73,56 @@
         </a>
     </div>
 
-    <!-- Blog Grid -->
+    <!-- Blog Grid Content -->
+    {% if homepage_layout == 'grid' %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up">
+        {% for post in posts %}
+        <div
+            class="group border border-gray-200 bg-white rounded-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow">
+            {% if post.image_url %}
+            <div class="relative h-48 overflow-hidden">
+                <img src="{{ post.image_url }}" alt="{{ post.title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            {% endif %}
+            <div class="p-6 flex flex-col flex-grow">
+                <span
+                    class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3 inline-block bg-slate-100 px-2 py-1 rounded">{{
+                    post.category }}</span>
+                <h3
+                    class="text-xl font-serif font-bold text-slate-900 mb-3 group-hover:text-red-700 transition-colors line-clamp-2">
+                    <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
+                </h3>
+                <p class="text-sm text-slate-600 font-serif leading-relaxed line-clamp-3 flex-grow mb-4">
+                    {{ post.summary }}
+                </p>
+                <div class="flex items-center text-xs text-slate-400 font-semibold uppercase tracking-widest mt-auto">
+                    <i class="fas fa-calendar mr-2"></i> {{ post.date_posted.strftime('%B %d, %Y') }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not posts %}
+        <div
+            class="col-span-full py-12 text-center text-slate-500 border border-gray-200 border-dashed rounded-lg bg-gray-50">
+            <i class="fas fa-folder-open text-4xl mb-3 text-slate-300"></i>
+            <p class="font-serif">No analysis published yet. Check back soon.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <!-- Featured Layout (Default) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Main Featured Post (Occupies 8 cols on desktop) -->
+        {% if posts %}
         <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden" data-aos="fade-right">
-            {% if posts %}
             <div class="relative h-[400px] bg-slate-100 overflow-hidden">
-                {% if posts[0].image_url %}
-                <img src="{{ posts[0].image_url }}" alt="{{ posts[0].title }}"
+                <img src="{{ posts[0].image_url or 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' }}"
+                    alt="Editorial Desktop"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center text-slate-300">
-                    <i class="fas fa-newspaper text-6xl"></i>
-                </div>
-                {% endif %}
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
                 </div>
 
@@ -100,23 +136,25 @@
                             class="hover:text-gray-200 transition-colors">{{ posts[0].title }}</a>
                     </h3>
                     <div class="flex items-center text-gray-300 text-xs font-semibold uppercase tracking-widest gap-4">
-                        <span><i class="fas fa-user mr-2"></i> {{ posts[0].author or "VibrocomX Team" }}</span>
                         <span><i class="fas fa-calendar mr-2"></i> {{ posts[0].date_posted.strftime('%B %d, %Y')
                             }}</span>
                     </div>
                 </div>
             </div>
-            {% else %}
-            <div
-                class="relative h-[400px] bg-slate-100 flex items-center justify-center text-slate-400 font-serif italic border-dashed border-2 border-slate-200">
-                No articles published yet.
-            </div>
-            {% endif %}
         </div>
+        {% else %}
+        <div class="lg:col-span-8 flex items-center justify-center border border-gray-200 border-dashed rounded-lg bg-gray-50 h-[400px]"
+            data-aos="fade-right">
+            <div class="text-center text-slate-500">
+                <i class="fas fa-newspaper text-4xl mb-3 text-slate-300"></i>
+                <p class="font-serif">No featured analysis available.</p>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Sidebar Posts (Occupies 4 cols on desktop) -->
         <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-left">
-            {% for post in posts[1:] %}
+            {% for post in posts[1:4] %}
             <!-- Dynamic Posts from Backend -->
             <div class="flex gap-4 group">
                 <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
@@ -124,7 +162,7 @@
                     <img src="{{ post.image_url }}" alt="{{ post.title }}"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-gray-300">
+                    <div class="w-full h-full flex items-center justify-center text-gray-300 bg-slate-100">
                         <i class="fas fa-newspaper text-2xl"></i>
                     </div>
                     {% endif %}
@@ -133,16 +171,21 @@
                     <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">{{ post.category
                         }}</span>
                     <h4
-                        class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
+                        class="text-sm font-serif font-bold text-slate-900 group-hover:text-red-700 transition-colors line-clamp-2 mb-2">
                         <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
                     </h4>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{ post.author or
-                        "VibrocomX Team" }} &bull; {{ post.date_posted.strftime('%b %d, %Y') }}</span>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{
+                        post.date_posted.strftime('%b %d, %Y') }}</span>
                 </div>
             </div>
             {% endfor %}
+
+            {% if posts|length == 1 %}
+            <p class="text-sm text-slate-500 italic mt-4 text-center">More analysis coming soon...</p>
+            {% endif %}
         </div>
     </div>
+    {% endif %}
 </section>
 
 <!-- Social Media & Multi-Platform Integration -->

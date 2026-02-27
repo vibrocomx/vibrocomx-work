@@ -41,6 +41,29 @@ def dashboard():
                            posts=posts, social_links=social_links, 
                            pages=pages, settings=settings, founders=founders)
 
+@admin_bp.route('/upload-logo', methods=['POST'])
+@login_required
+def upload_logo():
+    if 'logo_file' in request.files:
+        file = request.files['logo_file']
+        if file.filename != '':
+            filename = secure_filename('site_logo_' + file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            logo_url = f"/static/images/{filename}"
+            
+            setting = SiteSetting.query.filter_by(setting_key='site_logo').first()
+            if not setting:
+                setting = SiteSetting(setting_key='site_logo', setting_value=logo_url)
+                db.session.add(setting)
+            else:
+                setting.setting_value = logo_url
+                
+            db.session.commit()
+            flash('Site logo updated successfully.', 'success')
+            
+    return redirect(url_for('admin.dashboard'))
+
 @admin_bp.route('/toggle-setting/<setting_key>', methods=['POST'])
 @login_required
 def toggle_setting(setting_key):
@@ -68,28 +91,6 @@ def update_text_setting():
         db.session.commit()
         flash(f'Setting "{setting_key}" updated successfully.', 'success')
         
-    return redirect(url_for('admin.dashboard'))
-
-@admin_bp.route('/upload-logo', methods=['POST'])
-@login_required
-def upload_logo():
-    if 'logo_file' in request.files:
-        file = request.files['logo_file']
-        if file.filename != '':
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            logo_url = f"/static/images/{filename}"
-
-            setting = SiteSetting.query.filter_by(setting_key='site_logo_url').first()
-            if not setting:
-                setting = SiteSetting(setting_key='site_logo_url')
-                db.session.add(setting)
-            setting.setting_value = logo_url
-            db.session.commit()
-            flash('Site logo updated successfully.', 'success')
-        else:
-            flash('No file selected.', 'danger')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/edit-page', methods=['POST'])
@@ -189,8 +190,6 @@ def manage_post():
     summary = request.form.get('summary')
     content = request.form.get('content')
     category = request.form.get('category')
-    author = request.form.get('author')
-    date_posted_str = request.form.get('date_posted')
     
     # Handle File Upload
     image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
@@ -206,18 +205,48 @@ def manage_post():
         slug = title.lower().replace(' ', '-')
         
     post = Post(title=title, slug=slug, summary=summary, content=content, 
-                category=category, image_url=image_url, author=author)
-
-    if date_posted_str:
-        from datetime import datetime
-        try:
-            post.date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d')
-        except ValueError:
-            pass # fallback to default if parsing fails
-
+                category=category, image_url=image_url, is_published=True)
     db.session.add(post)
     db.session.commit()
     flash(f'Post "{title}" created.', 'success')
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        post.title = request.form.get('title')
+        post.slug = request.form.get('slug') or post.title.lower().replace(' ', '-')
+        post.summary = request.form.get('summary')
+        post.content = request.form.get('content')
+        post.category = request.form.get('category')
+        post.is_published = request.form.get('is_published') == 'on'
+        
+        # Handle File Upload
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                post.image_url = f"/static/images/{filename}"
+                
+        db.session.commit()
+        flash(f'Post "{post.title}" updated successfully.', 'success')
+        return redirect(url_for('admin.dashboard'))
+        
+    return render_template('admin/edit_post.html', post=post)
+
+@admin_bp.route('/toggle-publish/<int:id>', methods=['POST'])
+@login_required
+def toggle_publish(id):
+    post = Post.query.get_or_404(id)
+    post.is_published = not post.is_published
+    db.session.commit()
+    status = "Published" if post.is_published else "Unpublished"
+    flash(f'Post "{post.title}" is now {status}.', 'success')
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/delete-post/<int:id>')
@@ -228,47 +257,3 @@ def delete_post(id):
     db.session.commit()
     flash('Post deleted.', 'success')
     return redirect(url_for('admin.dashboard'))
-
-@admin_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_post(id):
-    post = Post.query.get_or_404(id)
-    
-    if request.method == 'POST':
-        post.title = request.form.get('title')
-        
-        # Only update slug if user provided one, else keep old one or re-generate
-        new_slug = request.form.get('slug')
-        if new_slug:
-            post.slug = new_slug
-            
-        post.summary = request.form.get('summary')
-        post.content = request.form.get('content')
-        post.category = request.form.get('category')
-        post.author = request.form.get('author')
-        
-        date_posted_str = request.form.get('date_posted')
-        if date_posted_str:
-            from datetime import datetime
-            try:
-                post.date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d')
-            except ValueError:
-                pass
-                
-        # Handle possible new image upload
-        if 'image_file' in request.files:
-            file = request.files['image_file']
-            if file.filename != '':
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                post.image_url = f"/static/images/{filename}"
-        elif request.form.get('existing_image_url'):
-            # Allow fallback URL update if text field is used
-            post.image_url = request.form.get('existing_image_url')
-
-        db.session.commit()
-        flash(f'Post "{post.title}" updated successfully.', 'success')
-        return redirect(url_for('admin.dashboard'))
-        
-    return render_template('admin/edit_post.html', post=post)

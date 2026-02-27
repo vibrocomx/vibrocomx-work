@@ -21,6 +21,7 @@ class Post(db.Model):
     author = db.Column(db.String(100), default="VibrocomX Team")
     tags = db.Column(db.String(200))
     image_url = db.Column(db.String(500))
+    is_published = db.Column(db.Boolean, default=True)
 
 class PageContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)

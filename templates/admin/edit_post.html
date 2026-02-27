@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit Post - {{ post.title }}{% endblock %}
+{% block title %}Edit Post: {{ post.title }}{% endblock %}
 
 {% block head %}
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
@@ -9,7 +9,7 @@
         selector: '#rich-content-editor',
         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-        height: 500,
+        height: 600,
         skin: 'oxide',
         content_css: 'default'
     });
@@ -17,85 +17,75 @@
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto my-12">
-    <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+<div class="max-w-4xl mx-auto">
+    <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-lg shadow-sm border border-gray-200 mt-8">
         <h1 class="text-3xl font-serif font-black text-slate-900 tracking-tight">Edit Post</h1>
         <a href="{{ url_for('admin.dashboard') }}"
-            class="text-slate-600 hover:text-slate-900 border px-4 py-2 rounded border-gray-300 hover:border-slate-900 transition-colors text-sm font-bold uppercase tracking-widest">Back
-            to Dashboard</a>
+            class="text-slate-600 hover:text-slate-900 border px-4 py-2 rounded border-gray-300 hover:border-slate-900 transition-colors text-sm font-bold uppercase tracking-widest">Cancel</a>
     </div>
 
-    <div class="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-12">
         <form action="{{ url_for('admin.edit_post', id=post.id) }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2 flex items-center justify-between border-b border-gray-100 pb-4 mb-2">
+                <div class="flex items-center">
+                    <input type="checkbox" id="is_published" name="is_published"
+                        class="w-4 h-4 text-slate-900 bg-gray-100 border-gray-300 rounded focus:ring-slate-500" {% if
+                        post.is_published %}checked{% endif %}>
+                    <label for="is_published"
+                        class="ml-2 text-sm font-bold text-slate-700 uppercase tracking-wide">Publish Post on
+                        Website</label>
+                </div>
+            </div>
 
-            <div class="md:col-span-2">
+            <div>
                 <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Title</label>
                 <input type="text" name="title" value="{{ post.title }}" required
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-base focus:ring-2 focus:ring-slate-400 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Category</label>
-                <input type="text" name="category" value="{{ post.category }}" required
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Author</label>
-                <input type="text" name="author" value="{{ post.author or 'VibrocomX Team' }}" required
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Date Posted</label>
-                <input type="date" name="date_posted"
-                    value="{{ post.date_posted.strftime('%Y-%m-%d') if post.date_posted else '' }}"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             </div>
 
             <div>
                 <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Slug (URL snippet)</label>
                 <input type="text" name="slug" value="{{ post.slug }}"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             </div>
 
-            <div class="md:col-span-2">
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Thumbnail/Image Update</label>
-                <div class="flex items-center gap-4">
-                    {% if post.image_url %}
-                    <div class="w-16 h-16 bg-gray-100 rounded border border-gray-200 overflow-hidden shrink-0">
-                        <img src="{{ post.image_url }}" class="w-full h-full object-cover">
-                    </div>
-                    {% endif %}
-                    <div
-                        class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
-                        <i class="fas fa-image text-slate-400 mr-2 ml-1"></i>
-                        <input type="file" name="image_file" accept="image/*"
-                            class="text-slate-500 w-full outline-none bg-transparent">
-                    </div>
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Category</label>
+                <input type="text" name="category" value="{{ post.category }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Update Cover Image</label>
+                <div
+                    class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
+                    <i class="fas fa-image text-slate-400 mr-2 ml-1"></i>
+                    <input type="file" name="image_file" accept="image/*"
+                        class="text-slate-500 w-full outline-none bg-transparent">
                 </div>
-                <!-- Hidden input to preserve existing image if no new one is uploaded -->
-                <input type="hidden" name="existing_image_url" value="{{ post.image_url or '' }}">
+                {% if post.image_url %}
+                <p class="text-xs text-gray-400 mt-2">Current image: <a href="{{ post.image_url }}" target="_blank"
+                        class="text-slate-600 underline">View</a></p>
+                {% endif %}
             </div>
 
             <div class="md:col-span-2">
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Summary</label>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Summary / Excerpt</label>
                 <textarea name="summary"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm h-24 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.summary }}</textarea>
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-24 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.summary }}</textarea>
             </div>
 
-            <div class="md:col-span-2">
-                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Full Content</label>
+            <div class="md:col-span-2 mt-4">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Full Content (HTML/Rich
+                    Text)</label>
                 <textarea id="rich-content-editor" name="content"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm h-64 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.content }}</textarea>
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm h-40 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.content }}</textarea>
             </div>
 
-            <div class="md:col-span-2 mt-4 pt-6 border-t border-gray-200 flex justify-end gap-4">
-                <a href="{{ url_for('admin.dashboard') }}"
-                    class="px-6 py-3 font-bold text-slate-600 hover:text-slate-900 border border-gray-300 rounded text-xs uppercase tracking-widest transition-colors">Cancel</a>
+            <div class="md:col-span-2 pt-4 border-t border-gray-100 mt-2">
                 <button type="submit"
-                    class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-8 rounded uppercase text-xs tracking-wider transition-colors shadow-sm">
+                    class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-8 rounded uppercase text-xs tracking-wider transition-colors">
                     Save Changes
                 </button>
             </div>

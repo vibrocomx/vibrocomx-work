@@ -61,7 +61,7 @@
             <strong>Embeds:</strong> <code>youtube_embed</code>, <code>instagram_embed</code>,
             <code>linkedin_embed</code>
         </p>
-        <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex flex-col gap-3">
+        <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex flex-col gap-3 mb-6">
             <input type="text" name="setting_key" placeholder="Setting Key (e.g. hero_tagline)"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             <textarea name="setting_value" placeholder="New Text Content"
@@ -71,26 +71,21 @@
                 Save Text Setting
             </button>
         </form>
-    </div>
 
-    <!-- LOGO MANAGER -->
-    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm relative overflow-hidden">
-        <h2 class="text-2xl font-bold text-slate-900 mb-4 uppercase tracking-widest border-b border-gray-100 pb-2">
-            Site Logo</h2>
-        <div class="mb-4 bg-gray-50 p-4 border border-gray-200 rounded flex justify-center items-center">
-            <img src="{{ site_logo_url }}" alt="Current Site Logo" class="h-16 w-auto object-contain">
-        </div>
+        <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Site Branding
+        </h3>
         <form action="{{ url_for('admin.upload_logo') }}" method="POST" enctype="multipart/form-data"
             class="flex flex-col gap-3">
+            <label class="block text-slate-500 text-xs font-bold uppercase">Upload Site Logo</label>
             <div
                 class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
                 <i class="fas fa-image text-slate-400 mr-2 ml-1"></i>
-                <input type="file" name="logo_file" accept="image/*"
-                    class="text-slate-500 w-full outline-none bg-transparent" required>
+                <input type="file" name="logo_file" accept="image/*" required
+                    class="text-slate-500 w-full outline-none bg-transparent">
             </div>
             <button type="submit"
                 class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-6 rounded uppercase text-xs tracking-wider transition-colors mt-1">
-                Update Logo
+                Upload Logo
             </button>
         </form>
     </div>
@@ -168,6 +163,7 @@
                     <tr class="text-slate-500 text-xs uppercase border-b border-gray-200 bg-gray-50">
                         <th class="p-3">Title</th>
                         <th class="p-3">Category</th>
+                        <th class="p-3">Status</th>
                         <th class="p-3">Date</th>
                         <th class="p-3 text-right">Action</th>
                     </tr>
@@ -179,10 +175,19 @@
                         <td class="p-3"><span
                                 class="bg-slate-200 text-slate-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">{{
                                 post.category }}</span></td>
+                        <td class="p-3">
+                            <form action="{{ url_for('admin.toggle_publish', id=post.id) }}" method="POST"
+                                class="inline">
+                                <button type="submit"
+                                    class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors {% if post.is_published %}bg-green-100 text-green-800 hover:bg-green-200{% else %}bg-gray-200 text-gray-600 hover:bg-gray-300{% endif %}">
+                                    {% if post.is_published %}Published{% else %}Draft{% endif %}
+                                </button>
+                            </form>
+                        </td>
                         <td class="p-3 text-slate-500">{{ post.date_posted.strftime('%Y-%m-%d') }}</td>
-                        <td class="p-3 text-right">
+                        <td class="p-3 text-right whitespace-nowrap">
                             <a href="{{ url_for('admin.edit_post', id=post.id) }}"
-                                class="text-blue-500 hover:text-blue-700 p-2"><i class="fas fa-edit"></i></a>
+                                class="text-slate-500 hover:text-slate-800 p-2"><i class="fas fa-edit"></i></a>
                             <a href="{{ url_for('admin.delete_post', id=post.id) }}"
                                 class="text-red-500 hover:text-red-700 p-2" onclick="return confirm('Delete post?')"><i
                                     class="fas fa-trash"></i></a>
@@ -202,13 +207,6 @@
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             <input type="text" name="category" placeholder="Category"
                 class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            <input type="text" name="author" placeholder="Author Name"
-                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            <div class="flex items-center gap-2">
-                <label class="text-xs font-bold text-slate-500 uppercase">Publish Date</label>
-                <input type="date" name="date_posted"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
-            </div>
 
             <div
                 class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
