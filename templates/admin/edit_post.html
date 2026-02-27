@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Post - {{ post.title }}{% endblock %}
+
+{% block head %}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#rich-content-editor',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 500,
+        skin: 'oxide',
+        content_css: 'default'
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto my-12">
+    <div class="mb-8 flex justify-between items-center bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h1 class="text-3xl font-serif font-black text-slate-900 tracking-tight">Edit Post</h1>
+        <a href="{{ url_for('admin.dashboard') }}"
+            class="text-slate-600 hover:text-slate-900 border px-4 py-2 rounded border-gray-300 hover:border-slate-900 transition-colors text-sm font-bold uppercase tracking-widest">Back
+            to Dashboard</a>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+        <form action="{{ url_for('admin.edit_post', id=post.id) }}" method="POST" enctype="multipart/form-data"
+            class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="md:col-span-2">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Title</label>
+                <input type="text" name="title" value="{{ post.title }}" required
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-base focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Category</label>
+                <input type="text" name="category" value="{{ post.category }}" required
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Author</label>
+                <input type="text" name="author" value="{{ post.author or 'VibrocomX Team' }}" required
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Date Posted</label>
+                <input type="date" name="date_posted"
+                    value="{{ post.date_posted.strftime('%Y-%m-%d') if post.date_posted else '' }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Slug (URL snippet)</label>
+                <input type="text" name="slug" value="{{ post.slug }}"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Thumbnail/Image Update</label>
+                <div class="flex items-center gap-4">
+                    {% if post.image_url %}
+                    <div class="w-16 h-16 bg-gray-100 rounded border border-gray-200 overflow-hidden shrink-0">
+                        <img src="{{ post.image_url }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endif %}
+                    <div
+                        class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
+                        <i class="fas fa-image text-slate-400 mr-2 ml-1"></i>
+                        <input type="file" name="image_file" accept="image/*"
+                            class="text-slate-500 w-full outline-none bg-transparent">
+                    </div>
+                </div>
+                <!-- Hidden input to preserve existing image if no new one is uploaded -->
+                <input type="hidden" name="existing_image_url" value="{{ post.image_url or '' }}">
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Summary</label>
+                <textarea name="summary"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm h-24 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.summary }}</textarea>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Full Content</label>
+                <textarea id="rich-content-editor" name="content"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-3 rounded w-full text-sm h-64 focus:ring-2 focus:ring-slate-400 outline-none">{{ post.content }}</textarea>
+            </div>
+
+            <div class="md:col-span-2 mt-4 pt-6 border-t border-gray-200 flex justify-end gap-4">
+                <a href="{{ url_for('admin.dashboard') }}"
+                    class="px-6 py-3 font-bold text-slate-600 hover:text-slate-900 border border-gray-300 rounded text-xs uppercase tracking-widest transition-colors">Cancel</a>
+                <button type="submit"
+                    class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-8 rounded uppercase text-xs tracking-wider transition-colors shadow-sm">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

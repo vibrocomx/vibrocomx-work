@@ -66,6 +66,9 @@ def inject_globals():
     linkedin_embed_setting = SiteSetting.query.filter_by(setting_key='linkedin_embed').first()
     linkedin_embed = linkedin_embed_setting.setting_value if linkedin_embed_setting else "https://www.linkedin.com/in/vibrocomx"
 
+    site_logo_setting = SiteSetting.query.filter_by(setting_key='site_logo_url').first()
+    site_logo_url = site_logo_setting.setting_value if site_logo_setting else url_for('static', filename='logo.png')
+
     return dict(
         social_links=social_links, 
         show_banner=show_banner, 
@@ -79,13 +82,14 @@ def inject_globals():
         quote_author=quote_author,
         youtube_embed=youtube_embed,
         instagram_embed=instagram_embed,
-        linkedin_embed=linkedin_embed
+        linkedin_embed=linkedin_embed,
+        site_logo_url=site_logo_url
     )
 
 @app.route('/')
 def index():
 
-    posts = Post.query.order_by(Post.date_posted.desc()).limit(3).all()
+    posts = Post.query.order_by(Post.date_posted.desc()).limit(4).all()
     return render_template('index.html', posts=posts)
 
 @app.route('/mission')

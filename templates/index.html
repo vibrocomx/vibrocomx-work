@@ -77,33 +77,46 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Main Featured Post (Occupies 8 cols on desktop) -->
         <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden" data-aos="fade-right">
+            {% if posts %}
             <div class="relative h-[400px] bg-slate-100 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                    alt="Editorial Desktop"
+                {% if posts[0].image_url %}
+                <img src="{{ posts[0].image_url }}" alt="{{ posts[0].title }}"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-slate-300">
+                    <i class="fas fa-newspaper text-6xl"></i>
+                </div>
+                {% endif %}
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
                 </div>
 
-                <div class="absolute bottom-0 left-0 p-8">
+                <div class="absolute bottom-0 left-0 p-8 w-full">
                     <span
                         class="bg-white text-slate-900 text-[10px] font-bold px-3 py-1 uppercase tracking-widest mb-4 inline-block shadow-sm">
-                        Global Security
+                        {{ posts[0].category }}
                     </span>
                     <h3 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">
-                        <a href="#" class="hover:text-gray-200 transition-colors">The Geopolitics of Resource Scarcity
-                            in 2026</a>
+                        <a href="{{ url_for('article', slug=posts[0].slug) }}"
+                            class="hover:text-gray-200 transition-colors">{{ posts[0].title }}</a>
                     </h3>
                     <div class="flex items-center text-gray-300 text-xs font-semibold uppercase tracking-widest gap-4">
-                        <span><i class="fas fa-user mr-2"></i> Dr. Ayesha Khan</span>
-                        <span><i class="fas fa-calendar mr-2"></i> Today</span>
+                        <span><i class="fas fa-user mr-2"></i> {{ posts[0].author or "VibrocomX Team" }}</span>
+                        <span><i class="fas fa-calendar mr-2"></i> {{ posts[0].date_posted.strftime('%B %d, %Y')
+                            }}</span>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div
+                class="relative h-[400px] bg-slate-100 flex items-center justify-center text-slate-400 font-serif italic border-dashed border-2 border-slate-200">
+                No articles published yet.
+            </div>
+            {% endif %}
         </div>
 
         <!-- Sidebar Posts (Occupies 4 cols on desktop) -->
         <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-left">
-            {% for post in posts[:3] %}
+            {% for post in posts[1:] %}
             <!-- Dynamic Posts from Backend -->
             <div class="flex gap-4 group">
                 <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
@@ -123,48 +136,11 @@
                         class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
                         <a href="{{ url_for('article', slug=post.slug) }}">{{ post.title }}</a>
                     </h4>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{
-                        post.date_posted.strftime('%b %d, %Y') }}</span>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{ post.author or
+                        "VibrocomX Team" }} &bull; {{ post.date_posted.strftime('%b %d, %Y') }}</span>
                 </div>
             </div>
             {% endfor %}
-
-            {% if posts|length < 3 %} <!-- Add static placeholders if less than 3 dynamic posts exist for structural
-                demo -->
-                <div class="flex gap-4 group {% if posts|length > 0 %}border-t border-gray-100 pt-6{% endif %}">
-                    <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
-                        <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                            alt="Placeholder 1"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <span
-                            class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Economics</span>
-                        <h4
-                            class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
-                            <a href="#">Inflation Metrics Re-evaluated by Leading Reserve Banks</a>
-                        </h4>
-                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Yesterday</span>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 group border-t border-gray-100 pt-6">
-                    <div class="w-24 h-24 flex-shrink-0 bg-gray-100 overflow-hidden relative border border-gray-200">
-                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                            alt="Placeholder 2"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Science</span>
-                        <h4
-                            class="text-sm font-serif font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-2">
-                            <a href="#">The Impact of Advanced Silicon Manufacturing on Geopolitics</a>
-                        </h4>
-                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Oct 12,
-                            2026</span>
-                    </div>
-                </div>
-                {% endif %}
         </div>
     </div>
 </section>

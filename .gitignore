@@ -1,0 +1,18 @@
+# Database
+instance/vibrocomx.db
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads
+static/images/*
+!static/images/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
