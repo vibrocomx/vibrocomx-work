@@ -6,7 +6,15 @@ from admin_routes import admin_bp
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vibrocomx-secret-key-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vibrocomx.db'
+
+# Fetch the URL from Render's environment
+db_url = os.environ.get('DATABASE_URL')
+# Fix the postgres:// to postgresql:// (Required by SQLAlchemy)
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+# Tell Flask to use the Render/Neon DB if it exists, otherwise use SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///vibrocomx.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images')
 

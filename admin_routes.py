@@ -268,7 +268,8 @@ def edit_post(id):
         post.summary = request.form.get('summary')
         post.content = request.form.get('content')
         post.category = request.form.get('category')
-        post.is_published = request.form.get('is_published') == 'on'
+        if 'is_published' in request.form:
+            post.is_published = request.form.get('is_published') == 'on'
         post.author = request.form.get('author') or post.author
         
         date_posted_str = request.form.get('date_posted')
