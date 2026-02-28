@@ -74,6 +74,24 @@
             </button>
         </form>
 
+        <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">System Status
+        </h3>
+        <div class="flex flex-col gap-2 mb-6">
+            <form action="{{ url_for('admin.update_text_setting') }}" method="POST" class="flex gap-2">
+                <input type="hidden" name="setting_key" value="maintenance_mode">
+                <select name="setting_value"
+                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2 rounded text-sm focus:ring-2 focus:ring-slate-400 outline-none w-full">
+                    <!-- using a context variable or just relying on the fact that if it's set to true, the UI doesn't necessarily need to remember the state, but ideally we inject it -->
+                    <option value="false" {% if maintenance_mode=='false' %}selected{% endif %}>Live (Public)</option>
+                    <option value="true" {% if maintenance_mode=='true' %}selected{% endif %}>Maintenance Mode (Locked)
+                    </option>
+                </select>
+                <button type="submit"
+                    class="bg-red-700 hover:bg-red-800 text-white px-4 rounded text-xs uppercase font-bold">Save Link
+                    Status</button>
+            </form>
+        </div>
+
         <h3 class="text-slate-600 text-sm font-bold uppercase mb-3 mt-6 border-t border-gray-200 pt-4">Broadcast Banner
             & Countdown</h3>
         <div class="flex flex-col gap-2 mb-6">
@@ -214,6 +232,7 @@
                         <th class="p-3">Title</th>
                         <th class="p-3">Category</th>
                         <th class="p-3">Status</th>
+                        <th class="p-3">Views</th>
                         <th class="p-3">Date</th>
                         <th class="p-3 text-right">Action</th>
                     </tr>
@@ -233,6 +252,9 @@
                                     {% if post.is_published %}Published{% else %}Draft{% endif %}
                                 </button>
                             </form>
+                        </td>
+                        <td class="p-3 text-slate-500 font-medium">
+                            <i class="fas fa-eye mr-1 text-slate-400"></i> {{ post.views or 0 }}
                         </td>
                         <td class="p-3 text-slate-500">{{ post.date_posted.strftime('%Y-%m-%d') }}</td>
                         <td class="p-3 text-right whitespace-nowrap">

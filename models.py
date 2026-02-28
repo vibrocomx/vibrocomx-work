@@ -22,6 +22,7 @@ class Post(db.Model):
     tags = db.Column(db.String(200))
     image_url = db.Column(db.String(500))
     is_published = db.Column(db.Boolean, default=True)
+    views = db.Column(db.Integer, default=0)
 
 class PageContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)

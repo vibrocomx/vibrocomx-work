@@ -27,6 +27,21 @@ with app.app_context():
             conn.commit()
     except Exception:
         pass # Column already exists or table issue
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(text("ALTER TABLE post ADD COLUMN views INTEGER DEFAULT 0;"))
+            conn.commit()
+    except Exception:
+        pass # Column already exists or table issue
+
+@app.before_request
+def check_maintenance_mode():
+    if request.path.startswith('/admin') or request.path.startswith('/static'):
+        return
+        
+    maintenance_setting = SiteSetting.query.filter_by(setting_key='maintenance_mode').first()
+    if maintenance_setting and maintenance_setting.setting_value == 'true':
+        return render_template('maintenance.html')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -82,6 +97,9 @@ def inject_globals():
     homepage_layout_setting = SiteSetting.query.filter_by(setting_key='homepage_layout').first()
     homepage_layout = homepage_layout_setting.setting_value if homepage_layout_setting else "featured"
     
+    maintenance_mode_setting = SiteSetting.query.filter_by(setting_key='maintenance_mode').first()
+    maintenance_mode = maintenance_mode_setting.setting_value if maintenance_mode_setting else 'false'
+    
     # Broadcast configuration
     show_broadcast_setting = SiteSetting.query.filter_by(setting_key='show_broadcast').first()
     show_broadcast = show_broadcast_setting.setting_value if show_broadcast_setting else 'true'
@@ -114,6 +132,7 @@ def inject_globals():
         linkedin_embed=linkedin_embed,
         site_logo=site_logo,
         homepage_layout=homepage_layout,
+        maintenance_mode=maintenance_mode,
         show_broadcast=show_broadcast,
         broadcast_title=broadcast_title,
         broadcast_subtitle=broadcast_subtitle,
@@ -150,6 +169,10 @@ def analysis():
 @app.route('/article/<slug>')
 def article(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
+    if post.views is None:
+        post.views = 0
+    post.views += 1
+    db.session.commit()
     return render_template('article.html', post=post)
 
 # Register Blueprint
