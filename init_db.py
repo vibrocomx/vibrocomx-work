@@ -10,11 +10,11 @@ def init_db():
         db.create_all()
 
         # Create Admin
-        if not User.query.filter_by(username='vcmxamin').first():
+        if not User.query.filter_by(username='vbr_x').first():
             hashed_pw = generate_password_hash('Powerhouse@18', method='pbkdf2:sha256')
-            admin = User(username='vcmxamin', password=hashed_pw)
+            admin = User(username='vbr_x', password=hashed_pw)
             db.session.add(admin)
-            print("Admin user created (vcmxamin/Powerhouse@18)")
+            print("Admin user created (vbr_x/Powerhouse@18)")
 
         # Default Settings
         settings = [
