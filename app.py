@@ -29,6 +29,16 @@ login_manager.init_app(app)
 from sqlalchemy import text
 with app.app_context():
     db.create_all()
+    
+    # Create Admin if it doesn't exist
+    from werkzeug.security import generate_password_hash
+    if not User.query.filter_by(username='vcmxamin').first():
+        hashed_pw = generate_password_hash('Powerhouse@18', method='pbkdf2:sha256')
+        admin = User(username='vcmxamin', password=hashed_pw)
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin user created (vcmxamin/Powerhouse@18)")
+
     try:
         with db.engine.connect() as conn:
             conn.execute(text("ALTER TABLE post ADD COLUMN is_published BOOLEAN DEFAULT 1;"))
