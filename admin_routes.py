@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
-from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder
+from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder, UploadedImage
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -49,9 +49,10 @@ def upload_logo():
         file = request.files['logo_file']
         if file.filename != '':
             filename = secure_filename('site_logo_' + file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            logo_url = f"/static/images/{filename}"
+            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
+            db.session.add(img)
+            db.session.commit()
+            logo_url = f"/image/{img.id}"
             
             setting = SiteSetting.query.filter_by(setting_key='site_logo').first()
             if not setting:
@@ -162,9 +163,10 @@ def manage_founder():
         file = request.files['image_file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            image_url = f"/static/images/{filename}"
+            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
+            db.session.add(img)
+            db.session.commit()
+            image_url = f"/image/{img.id}"
     
     # Simple add for now (could extend to edit if id passed)
     founder = Founder(name=name, role=role, bio=bio, image_url=image_url)
@@ -208,9 +210,10 @@ def manage_post():
         file = request.files['image_file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            image_url = f"/static/images/{filename}"
+            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
+            db.session.add(img)
+            db.session.commit()
+            image_url = f"/image/{img.id}"
     
     if not slug:
         slug = title.lower().replace(' ', '-')
@@ -229,33 +232,11 @@ def upload_image():
         file = request.files['file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            return jsonify({'location': f'/static/images/{filename}'})
+            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
+            db.session.add(img)
+            db.session.commit()
+            return jsonify({'location': f'/image/{img.id}'})
     return jsonify({'error': 'Failed to upload image.'}), 400
-    summary = request.form.get('summary')
-    content = request.form.get('content')
-    category = request.form.get('category')
-    
-    # Handle File Upload
-    image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
-    if 'image_file' in request.files:
-        file = request.files['image_file']
-        if file.filename != '':
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            image_url = f"/static/images/{filename}"
-    
-    if not slug:
-        slug = title.lower().replace(' ', '-')
-        
-    post = Post(title=title, slug=slug, summary=summary, content=content, 
-                category=category, image_url=image_url, is_published=True)
-    db.session.add(post)
-    db.session.commit()
-    flash(f'Post "{title}" created.', 'success')
-    return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -284,9 +265,10 @@ def edit_post(id):
             file = request.files['image_file']
             if file.filename != '':
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                post.image_url = f"/static/images/{filename}"
+                img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
+                db.session.add(img)
+                db.session.commit()
+                post.image_url = f"/image/{img.id}"
                 
         db.session.commit()
         flash(f'Post "{post.title}" updated successfully.', 'success')

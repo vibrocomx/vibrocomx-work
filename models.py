@@ -23,6 +23,14 @@ class Post(db.Model):
     image_url = db.Column(db.String(500))
     is_published = db.Column(db.Boolean, default=True)
     views = db.Column(db.Integer, default=0)
+    comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    author_name = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
 
 class PageContent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,3 +54,10 @@ class SiteSetting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     setting_key = db.Column(db.String(100), unique=True, nullable=False)
     setting_value = db.Column(db.String(500))
+
+class UploadedImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    mimetype = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.LargeBinary, nullable=False)
+    date_uploaded = db.Column(db.DateTime, default=datetime.utcnow)

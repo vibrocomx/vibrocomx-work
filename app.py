@@ -1,7 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, current_user
 import os
-from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder
+from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder, Comment, UploadedImage
+from flask import Response
 from admin_routes import admin_bp
 
 app = Flask(__name__)
@@ -158,6 +159,11 @@ def inject_globals():
         broadcast_fallback_quote=broadcast_fallback_quote
     )
 
+@app.route('/image/<int:image_id>')
+def serve_image(image_id):
+    img = UploadedImage.query.get_or_404(image_id)
+    return Response(img.data, mimetype=img.mimetype)
+
 @app.route('/')
 def index():
     posts = Post.query.filter_by(is_published=True).order_by(Post.date_posted.desc()).all()
@@ -184,9 +190,19 @@ def analysis():
         
     return render_template('posts.html', posts=posts, title=page_title)
 
-@app.route('/article/<slug>')
+@app.route('/article/<slug>', methods=['GET', 'POST'])
 def article(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
+    
+    if request.method == 'POST':
+        author_name = request.form.get('author_name')
+        content = request.form.get('content')
+        if author_name and content:
+            comment = Comment(post_id=post.id, author_name=author_name, content=content)
+            db.session.add(comment)
+            db.session.commit()
+            return redirect(url_for('article', slug=slug))
+
     if post.views is None:
         post.views = 0
     post.views += 1
