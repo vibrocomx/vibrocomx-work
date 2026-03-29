@@ -49,10 +49,9 @@ def upload_logo():
         file = request.files['logo_file']
         if file.filename != '':
             filename = secure_filename('site_logo_' + file.filename)
-            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
-            db.session.add(img)
-            db.session.commit()
-            logo_url = f"/image/{img.id}"
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            logo_url = url_for('static', filename=f'images/{filename}')
             
             setting = SiteSetting.query.filter_by(setting_key='site_logo').first()
             if not setting:
@@ -163,10 +162,9 @@ def manage_founder():
         file = request.files['image_file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
-            db.session.add(img)
-            db.session.commit()
-            image_url = f"/image/{img.id}"
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            image_url = url_for('static', filename=f'images/{filename}')
     
     # Simple add for now (could extend to edit if id passed)
     founder = Founder(name=name, role=role, bio=bio, image_url=image_url)
@@ -210,10 +208,9 @@ def manage_post():
         file = request.files['image_file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
-            db.session.add(img)
-            db.session.commit()
-            image_url = f"/image/{img.id}"
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            image_url = url_for('static', filename=f'images/{filename}')
     
     if not slug:
         slug = title.lower().replace(' ', '-')
@@ -232,10 +229,9 @@ def upload_image():
         file = request.files['file']
         if file.filename != '':
             filename = secure_filename(file.filename)
-            img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
-            db.session.add(img)
-            db.session.commit()
-            return jsonify({'location': f'/image/{img.id}'})
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            return jsonify({'location': url_for('static', filename=f'images/{filename}')})
     return jsonify({'error': 'Failed to upload image.'}), 400
 
 @admin_bp.route('/edit-post/<int:id>', methods=['GET', 'POST'])
@@ -265,10 +261,9 @@ def edit_post(id):
             file = request.files['image_file']
             if file.filename != '':
                 filename = secure_filename(file.filename)
-                img = UploadedImage(filename=filename, mimetype=file.mimetype, data=file.read())
-                db.session.add(img)
-                db.session.commit()
-                post.image_url = f"/image/{img.id}"
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                post.image_url = url_for('static', filename=f'images/{filename}')
                 
         db.session.commit()
         flash(f'Post "{post.title}" updated successfully.', 'success')
