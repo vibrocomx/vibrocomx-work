@@ -186,42 +186,64 @@ def delete_founder(id):
 @admin_bp.route('/manage-post', methods=['POST'])
 @login_required
 def manage_post():
-    title = request.form.get('title')
-    slug = request.form.get('slug')
-    summary = request.form.get('summary')
-    content = request.form.get('content')
-    category = request.form.get('category')
-    author = request.form.get('author') or "VibrocomX Team"
-    
-    date_posted_str = request.form.get('date_posted')
-    if date_posted_str:
-        try:
-            date_posted = datetime.fromisoformat(date_posted_str)
-        except ValueError:
-            date_posted = datetime.utcnow()
-    else:
-        date_posted = datetime.utcnow()
-    
-    # Handle File Upload
-    image_url = request.form.get('existing_image_url', '') # Fallback to existing or URL field if we kept it
-    if 'image_file' in request.files:
-        file = request.files['image_file']
-        if file.filename != '':
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            image_url = url_for('static', filename=f'images/{filename}')
-    
-    if not slug:
-        slug = title.lower().replace(' ', '-')
-        
-    post = Post(title=title, slug=slug, summary=summary, content=content, 
-                category=category, image_url=image_url, author=author, date_posted=date_posted, is_published=True)
-    db.session.add(post)
-    db.session.commit()
-    flash(f'Post "{title}" created.', 'success')
-    return redirect(url_for('admin.dashboard'))
+    try:
+        title = request.form.get('title')
+        if not title:
+            title = "Untitled Post"
+            
+        slug = request.form.get('slug')
+        if not slug:
+            slug = title.lower().replace(' ', '-')
 
+        summary = request.form.get('summary', '')
+        content = request.form.get('content', '')
+        category = request.form.get('category', 'General')
+        
+        author = request.form.get('author')
+        if not author:
+            author = "VibrocomX Team"
+        
+        date_posted_str = request.form.get('date_posted')
+        if date_posted_str:
+            try:
+                date_posted = datetime.fromisoformat(date_posted_str)
+            except ValueError:
+                date_posted = datetime.utcnow()
+        else:
+            date_posted = datetime.utcnow()
+        
+        # Handle File Upload Safely
+        image_url = request.form.get('existing_image_url', '') 
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                # Fallback if secure_filename strips out special characters
+                if not filename:
+                    filename = f"image_{int(datetime.utcnow().timestamp())}.png"
+                    
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                image_url = url_for('static', filename=f'images/{filename}')
+        
+        # Create Post object safely (without forcing is_published in the constructor)
+        post = Post(title=title, slug=slug, summary=summary, content=content, 
+                    category=category, image_url=image_url, author=author, date_posted=date_posted)
+        
+        # Check if the model actually supports is_published before setting it
+        if hasattr(post, 'is_published'):
+            post.is_published = True
+
+        db.session.add(post)
+        db.session.commit()
+        flash(f'Post "{title}" created successfully.', 'success')
+
+    except Exception as e:
+        # If the database fails, cancel the save and tell the admin exactly why
+        db.session.rollback()
+        flash(f'Error creating post: {str(e)}', 'danger')
+
+    return redirect(url_for('admin.dashboard'))
 @admin_bp.route('/upload-image', methods=['POST'])
 @login_required
 def upload_image():
