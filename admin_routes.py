@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 import os
+import uuid
 from datetime import datetime
 from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder, UploadedImage
 
@@ -38,9 +39,20 @@ def dashboard():
     settings = SiteSetting.query.all() # Updated Model Name
     founders = Founder.query.all()
     
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    media_files = []
+    if os.path.exists(upload_folder):
+        files = [(f, os.path.getmtime(os.path.join(upload_folder, f))) for f in os.listdir(upload_folder) if os.path.isfile(os.path.join(upload_folder, f))]
+        files.sort(key=lambda x: x[1], reverse=True)
+        for f, _ in files:
+            media_files.append({
+                'filename': f,
+                'url': url_for('static', filename=f'images/{f}')
+            })
+    
     return render_template('admin/dashboard.html', 
                            posts=posts, social_links=social_links, 
-                           pages=pages, settings=settings, founders=founders)
+                           pages=pages, settings=settings, founders=founders, media_files=media_files)
 
 @admin_bp.route('/upload-logo', methods=['POST'])
 @login_required
@@ -48,7 +60,10 @@ def upload_logo():
     if 'logo_file' in request.files:
         file = request.files['logo_file']
         if file.filename != '':
-            filename = secure_filename('site_logo_' + file.filename)
+            base_filename = secure_filename('site_logo_' + file.filename)
+            if not base_filename:
+                base_filename = 'logo' + os.path.splitext(file.filename)[1]
+            filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             logo_url = url_for('static', filename=f'images/{filename}')
@@ -63,6 +78,50 @@ def upload_logo():
             db.session.commit()
             flash('Site logo updated successfully.', 'success')
             
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/upload-media', methods=['POST'])
+@login_required
+def upload_media():
+    if 'media_file' in request.files:
+        file = request.files['media_file']
+        custom_name = request.form.get('custom_name')
+        if file.filename != '':
+            ext = os.path.splitext(file.filename)[1]
+            if custom_name:
+                filename = secure_filename(custom_name) + ext
+                # If custom name lacks characters to secure
+                if not secure_filename(custom_name):
+                    filename = f"media_{uuid.uuid4().hex[:8]}{ext}"
+            else:
+                base_filename = secure_filename(file.filename)
+                if not base_filename:
+                    base_filename = 'media' + ext
+                filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
+            
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            flash(f'Media uploaded successfully. Path: /static/images/{filename}', 'success')
+        else:
+            flash('No file selected.', 'danger')
+            
+    return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/delete-media/<filename>', methods=['POST'])
+@login_required
+def delete_media(filename):
+    # Basic security check
+    if '..' in filename or '/' in filename:
+        flash('Invalid filename.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+        
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], secure_filename(filename))
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        flash(f'Deleted {filename}.', 'success')
+    else:
+        flash('File not found.', 'danger')
+        
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/toggle-setting/<setting_key>', methods=['POST'])
@@ -161,7 +220,10 @@ def manage_founder():
     if 'image_file' in request.files:
         file = request.files['image_file']
         if file.filename != '':
-            filename = secure_filename(file.filename)
+            base_filename = secure_filename(file.filename)
+            if not base_filename:
+                base_filename = 'founder' + os.path.splitext(file.filename)[1]
+            filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             image_url = url_for('static', filename=f'images/{filename}')
@@ -207,7 +269,10 @@ def manage_post():
     if 'image_file' in request.files:
         file = request.files['image_file']
         if file.filename != '':
-            filename = secure_filename(file.filename)
+            base_filename = secure_filename(file.filename)
+            if not base_filename:
+                base_filename = 'post' + os.path.splitext(file.filename)[1]
+            filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             image_url = url_for('static', filename=f'images/{filename}')
@@ -228,7 +293,10 @@ def upload_image():
     if 'file' in request.files:
         file = request.files['file']
         if file.filename != '':
-            filename = secure_filename(file.filename)
+            base_filename = secure_filename(file.filename)
+            if not base_filename:
+                base_filename = 'image' + os.path.splitext(file.filename)[1]
+            filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             return jsonify({'location': url_for('static', filename=f'images/{filename}')})
@@ -260,7 +328,10 @@ def edit_post(id):
         if 'image_file' in request.files:
             file = request.files['image_file']
             if file.filename != '':
-                filename = secure_filename(file.filename)
+                base_filename = secure_filename(file.filename)
+                if not base_filename:
+                    base_filename = 'edited_post' + os.path.splitext(file.filename)[1]
+                filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
                 file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
                 post.image_url = url_for('static', filename=f'images/{filename}')

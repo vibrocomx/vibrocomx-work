@@ -5,13 +5,15 @@ from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder
 from flask import Response
 from admin_routes import admin_bp
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vibrocomx-secret-key-change-in-production'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images')
+app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static', 'images')
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
