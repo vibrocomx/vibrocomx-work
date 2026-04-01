@@ -269,10 +269,7 @@ def manage_post():
     if 'image_file' in request.files:
         file = request.files['image_file']
         if file.filename != '':
-            base_filename = secure_filename(file.filename)
-            if not base_filename:
-                base_filename = 'post' + os.path.splitext(file.filename)[1]
-            filename = f"{uuid.uuid4().hex[:8]}_{base_filename}"
+            filename = secure_filename(file.filename)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             image_url = url_for('static', filename=f'images/{filename}')
@@ -286,7 +283,6 @@ def manage_post():
     db.session.commit()
     flash(f'Post "{title}" created.', 'success')
     return redirect(url_for('admin.dashboard'))
-
 @admin_bp.route('/upload-image', methods=['POST'])
 @login_required
 def upload_image():
