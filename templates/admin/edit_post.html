@@ -67,8 +67,14 @@
 
             <div>
                 <label class="block text-slate-500 text-xs font-bold uppercase mb-2">Category</label>
-                <input type="text" name="category" value="{{ post.category }}"
-                    class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+                <select name="category" class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none" required>
+                    <option value="cartoon" {% if post.category == 'cartoon' %}selected{% endif %}>Cartoon</option>
+                    <option value="research" {% if post.category == 'research' %}selected{% endif %}>Research Report</option>
+                    <option value="security" {% if post.category == 'security' %}selected{% endif %}>Security</option>
+                    <option value="politics" {% if post.category == 'politics' %}selected{% endif %}>Politics</option>
+                    <option value="economy" {% if post.category == 'economy' %}selected{% endif %}>Economy</option>
+                    <option value="science" {% if post.category == 'science' %}selected{% endif %}>Science</option>
+                </select>
             </div>
 
             <div>

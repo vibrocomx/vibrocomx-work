@@ -331,8 +331,15 @@
                     class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
             </div>
 
-            <input type="text" name="category" placeholder="Category"
-                class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none">
+            <select name="category" class="bg-gray-50 border border-gray-300 text-slate-800 p-2.5 rounded w-full text-sm focus:ring-2 focus:ring-slate-400 outline-none" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="cartoon">Cartoon</option>
+                <option value="research">Research Report</option>
+                <option value="security">Security</option>
+                <option value="politics">Politics</option>
+                <option value="economy">Economy</option>
+                <option value="science">Science</option>
+            </select>
 
             <div
                 class="bg-gray-50 border border-gray-300 rounded p-2 text-sm flex items-center w-full focus-within:ring-2 focus-within:ring-slate-400">
