@@ -1,9 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, current_user
 import os
+import mimetypes
 from models import db, User, Post, PageContent, SocialLink, SiteSetting, Founder, Comment, UploadedImage
 from flask import Response
 from admin_routes import admin_bp
+
+# Fix Windows registry MIME type bugs
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('text/css', '.css')
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -204,6 +209,21 @@ def article(slug):
     post.views += 1
     db.session.commit()
     return render_template('article.html', post=post)
+
+@app.route('/cartoons')
+def cartoons():
+    posts = Post.query.filter(Post.category.ilike('cartoon')).filter_by(is_published=True).order_by(Post.date_posted.desc()).all()
+    return render_template('cartoons.html', posts=posts)
+
+@app.route('/research-reports')
+def research_reports():
+    posts = Post.query.filter(Post.category.ilike('research')).filter_by(is_published=True).order_by(Post.date_posted.desc()).all()
+    return render_template('posts.html', posts=posts, title='Research Reports')
+
+@app.route('/download/<slug>')
+def download_post(slug):
+    post = Post.query.filter_by(slug=slug).first_or_404()
+    return render_template('download.html', post=post)
 
 # Register Blueprint
 app.register_blueprint(admin_bp, url_prefix='/admin')

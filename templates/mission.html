@@ -3,21 +3,84 @@
 {% block title %}Our Mission{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-20 px-4">
-    <div class="text-center mb-16" data-aos="fade-down">
-        <h1 class="text-4xl md:text-6xl font-serif font-black text-slate-900 tracking-tight mb-6">
-            Our Mission
-        </h1>
-        <p class="text-xl md:text-2xl text-slate-600 font-serif italic max-w-2xl mx-auto leading-relaxed">
-            "{{ mission_tagline }}"
-        </p>
-        <div class="h-1 w-24 bg-slate-900 mx-auto mt-8"></div>
+<div class="mb-16">
+    <!-- Editorial Hero Header -->
+    <div class="editorial-header rounded-sm py-24 md:py-32 px-4 text-center mb-16 shadow-lg">
+        <div class="relative z-10" data-aos="fade-down">
+            <h1 class="text-5xl md:text-7xl font-serif font-black mb-6 tracking-tight drop-shadow-md">
+                <i class="fas fa-pen-nib mr-4 text-red-500 opacity-80"></i>Our Mission
+            </h1>
+            <p class="text-xl md:text-3xl font-serif italic text-gray-200 max-w-3xl mx-auto leading-relaxed">
+                "{{ mission_tagline }}"
+            </p>
+        </div>
     </div>
 
-    <div class="prose prose-lg prose-slate max-w-none text-slate-800 font-serif leading-relaxed drop-cap bg-white p-8 md:p-12 shadow-sm border border-gray-200 rounded-sm"
-        data-aos="fade-up" data-aos-delay="200">
-        <!-- Render HTML content securely (assuming admin is trusted) -->
-        {{ mission_text | safe }}
+    <!-- The Pen is Mightier Section -->
+    <div class="max-w-4xl mx-auto text-center px-4 mb-20" data-aos="fade-up">
+        <h2 class="text-4xl md:text-5xl font-serif font-black text-slate-900 mb-8 leading-tight">
+            The Pen is Mightier <br/><span class="text-red-700">Than the Sword</span>
+        </h2>
+        <p class="text-xl text-slate-600 font-serif leading-relaxed max-w-3xl mx-auto">
+            At VibrocomX, we believe that a single stroke of ink can illuminate truths that a thousand words cannot. Our editorial cartoons cut through political rhetoric, expose institutional hypocrisy, and give voice to the voiceless — all through the universal language of visual storytelling.
+        </p>
+        <div class="ink-divider"></div>
+    </div>
+
+    <!-- Mission Content -->
+    <div class="max-w-4xl mx-auto px-4 mb-24">
+        <div class="prose prose-lg prose-slate max-w-none text-slate-800 font-serif leading-relaxed bg-white p-8 md:p-12 shadow-sm border border-gray-200 rounded-sm"
+            data-aos="fade-up" data-aos-delay="100">
+            {{ mission_text | safe }}
+        </div>
+    </div>
+
+    <!-- Founders Section -->
+    <div class="max-w-6xl mx-auto px-4 mb-24">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight inline-block border-b-4 border-red-700 pb-2">
+                The Minds Behind the Ink
+            </h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for founder in founders %}
+            <div class="bg-white p-8 border-2 border-slate-200 rounded-sm text-center shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 duration-300" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-md bg-slate-100 flex items-center justify-center">
+                    {% if founder.image_url %}
+                    <img src="{{ founder.image_url }}" alt="{{ founder.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <i class="fas fa-user-tie text-4xl text-slate-400"></i>
+                    {% endif %}
+                </div>
+                <h3 class="text-2xl font-serif font-bold text-slate-900 mb-1">{{ founder.name }}</h3>
+                <p class="text-xs font-bold text-red-700 uppercase tracking-widest mb-4">{{ founder.role }}</p>
+                <div class="w-12 h-1 bg-slate-200 mx-auto mb-4"></div>
+                <p class="text-sm text-slate-600 font-serif italic leading-relaxed">
+                    {{ founder.bio }}
+                </p>
+            </div>
+            {% else %}
+            <div class="col-span-full text-center text-slate-500 italic font-serif">
+                <p>The minds behind VibrocomX remain focused on the work.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-slate-900 text-white rounded-sm py-16 px-4 text-center relative overflow-hidden" data-aos="fade-up">
+        <div class="relative z-10">
+            <h2 class="text-3xl md:text-4xl font-serif font-black mb-8">See Our Work in Action</h2>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{{ url_for('cartoons') }}" class="inline-block bg-red-700 text-white font-bold py-3 px-8 rounded-sm hover:bg-red-800 transition-all uppercase tracking-widest text-sm shadow-md">
+                    <i class="fas fa-pen-nib mr-2"></i>Browse Cartoons
+                </a>
+                <a href="{{ url_for('analysis') }}" class="inline-block bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-sm hover:bg-white hover:text-slate-900 transition-all uppercase tracking-widest text-sm">
+                    Read Analysis
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

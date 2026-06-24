@@ -114,9 +114,10 @@
         <div
             class="group border border-gray-200 bg-white rounded-sm overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow">
             {% if post.image_url %}
-            <div class="relative h-48 overflow-hidden">
+            <div class="relative h-48 overflow-hidden zoomable-image">
                 <img src="{{ post.image_url }}" alt="{{ post.title }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="zoom-indicator"><i class="fas fa-search-plus"></i></div>
             </div>
             {% endif %}
             <div class="p-6 flex flex-col flex-grow">
@@ -151,11 +152,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Main Featured Post (Occupies 8 cols on desktop) -->
         {% if posts %}
-        <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden" data-aos="fade-right">
+        <div class="lg:col-span-8 group border border-gray-200 bg-white overflow-hidden zoomable-image" data-aos="fade-right">
             <div class="relative h-[400px] bg-slate-100 overflow-hidden">
                 <img src="{{ posts[0].image_url or 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' }}"
                     alt="Editorial Desktop"
                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                <div class="zoom-indicator"><i class="fas fa-search-plus"></i></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80">
                 </div>
 

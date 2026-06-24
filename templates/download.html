@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }} | VibrocomX</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 0.5em;
+        }
+        .meta {
+            color: #64748b;
+            font-size: 0.9em;
+            margin-bottom: 2em;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .hero-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            margin-bottom: 2em;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .footer {
+            margin-top: 3em;
+            padding-top: 1em;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.8em;
+            color: #94a3b8;
+            text-align: center;
+        }
+        @media print {
+            body { padding: 0; }
+            @page { margin: 2cm; }
+        }
+        .no-print { }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align:center; margin-bottom: 2em; padding: 1em; background: #f8fafc; border: 1px solid #e2e8f0;">
+        <button onclick="window.print()" style="background: #0f172a; color: white; border: none; padding: 12px 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; font-size: 13px;">Download as PDF</button>
+        <p style="margin-top: 0.5em; font-size: 12px; color: #64748b;">Click the button above, then choose "Save as PDF" in the print dialog</p>
+    </div>
+
+    <h1>{{ post.title }}</h1>
+    <div class="meta">
+        <span>{{ post.category }}</span> &bull;
+        <span>{{ post.date_posted.strftime('%B %d, %Y') }}</span> &bull;
+        <span>By {{ post.author }}</span>
+    </div>
+
+    {% if post.image_url %}
+    <img src="{{ post.image_url }}" alt="{{ post.title }}" class="hero-img">
+    {% endif %}
+
+    <div>
+        {{ post.content | safe }}
+    </div>
+
+    <div class="footer">
+        <p>&copy; VibrocomX — All Rights Reserved</p>
+        <p>Downloaded from vibrocomx.com</p>
+    </div>
+
+    <script>
+        // Auto-trigger print for quick download
+        // window.print();
+    </script>
+</body>
+</html>

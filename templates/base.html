@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VibrocomX{% endblock %} | Alternative Media</title>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link
@@ -38,6 +38,22 @@
             100% {
                 transform: translate(-100%, 0);
             }
+        }
+
+        /* Nav link hover underline effect */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #0f172a;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
         }
     </style>
 </head>
@@ -111,6 +127,14 @@
                             class="block px-4 py-2 text-xs uppercase tracking-widest text-gray-700 hover:bg-gray-50 hover:text-slate-900">Science</a>
                     </div>
                 </div>
+                <a href="{{ url_for('cartoons') }}"
+                    class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
+                    <span class="z-10 relative"><i class="fas fa-pen-nib mr-1 text-[10px]"></i>Cartoons</span>
+                </a>
+                <a href="{{ url_for('research_reports') }}"
+                    class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
+                    <span class="z-10 relative">Research Reports</span>
+                </a>
                 <a href="{{ url_for('mission') }}"
                     class="nav-link relative text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest transition-colors py-2">
                     <span class="z-10 relative">Mission</span>
@@ -148,6 +172,10 @@
                 </div>
             </div>
 
+            <a href="{{ url_for('cartoons') }}"
+                class="block py-2 text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest"><i class="fas fa-pen-nib mr-1 text-[10px]"></i>Cartoons</a>
+            <a href="{{ url_for('research_reports') }}"
+                class="block py-2 text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest">Research Reports</a>
             <a href="{{ url_for('mission') }}"
                 class="block py-2 text-gray-600 hover:text-slate-900 uppercase text-xs font-bold tracking-widest">Mission</a>
 
@@ -182,7 +210,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white py-16 mt-20 border-t border-gray-200 relative overflow-hidden">
+    <footer class="bg-white py-16 mt-20 border-t border-gray-200 relative overflow-hidden" data-aos="fade-up" data-aos-offset="50">
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col md:flex-row justify-between items-center gap-12 mb-12">
                 <!-- Branding & Quote -->
