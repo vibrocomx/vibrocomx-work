@@ -93,6 +93,9 @@ def inject_globals():
     mission_tagline_setting = SiteSetting.query.filter_by(setting_key='mission_tagline').first()
     mission_tagline = mission_tagline_setting.setting_value if mission_tagline_setting else "We dismantle narratives, decode global shifts, and deliver rigorous, unapologetic analysis on the forces shaping our world."
 
+    cartoons_tagline_setting = SiteSetting.query.filter_by(setting_key='cartoons_tagline').first()
+    cartoons_tagline = cartoons_tagline_setting.setting_value if cartoons_tagline_setting else "Where ink meets insight — our visual commentary on the world's most pressing issues."
+
     featured_quote_setting = SiteSetting.query.filter_by(setting_key='featured_quote').first()
     featured_quote = featured_quote_setting.setting_value if featured_quote_setting else "Truth acts as a vibration through the noise. We bring our rigorous reporting directly to the platforms you use."
     
@@ -145,6 +148,7 @@ def inject_globals():
         hero_tagline=hero_tagline,
         hero_subtext=hero_subtext,
         mission_tagline=mission_tagline,
+        cartoons_tagline=cartoons_tagline,
         featured_quote=featured_quote,
         quote_author=quote_author,
         youtube_embed=youtube_embed,
